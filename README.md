@@ -5,5 +5,5 @@
  <p><b>Members</b></p>
  <p>1. </p>
  <p>2. Vy Vu</p>
- <p>3. </p>
+ <p>3. Nicholas Callahan</p>
  <p>4. </p>
