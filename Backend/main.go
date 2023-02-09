@@ -198,7 +198,7 @@ func errorResponse(err error) gin.H {
 	return gin.H{"error": err.Error()}
 }
 
-func createAcc(ctx *gin.Context) {
+func createAccount(ctx *gin.Context) {
 	// user validation
 	var req Account
 	if err := ctx.ShouldBindJSON(&req); err != nil {
