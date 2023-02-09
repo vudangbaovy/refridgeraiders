@@ -10,7 +10,11 @@ then searches for the two entries and outputs the id, this can be changed to nam
 */
 
 import (
+	"net/http"
+
 	"fmt"
+
+	"github.com/gin-gonic/gin"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -19,10 +23,10 @@ import (
 // user profile definition
 type UserProfile struct {
 	gorm.Model
-	Name  string
-	Password string
+	Name       string
+	Password   string
 	AdminLevel uint8
-	Allergies string
+	Allergies  string
 }
 
 // sets up Sqlite3 database
@@ -65,21 +69,21 @@ func testUserAdd(db *gorm.DB) {
 
 func testUserSearch(db *gorm.DB) {
 	//Function is a framework for a future function to query database
-	
+
 	numberOfEntries := 0
 	fmt.Print("Enter Number of Queries: ")
 	fmt.Scan(&numberOfEntries)
 
 	for i := 0; i < numberOfEntries; i++ {
-	var searchName string
-	var foundUser UserProfile
-	fmt.Print("Enter UserName To Search: ")
-	fmt.Scan(&searchName)
-	db.Where("Name = ?", searchName).First(&foundUser)
+		var searchName string
+		var foundUser UserProfile
+		fmt.Print("Enter UserName To Search: ")
+		fmt.Scan(&searchName)
+		db.Where("Name = ?", searchName).First(&foundUser)
 
-	fmt.Println("\nStored Information:\nUserName: " + foundUser.Name + "\nPassword: " + foundUser.Password)
-	fmt.Println("Allergies: " + foundUser.Allergies + "\nCreatedAt: " + foundUser.CreatedAt.String())
-	fmt.Println()
+		fmt.Println("\nStored Information:\nUserName: " + foundUser.Name + "\nPassword: " + foundUser.Password)
+		fmt.Println("Allergies: " + foundUser.Allergies + "\nCreatedAt: " + foundUser.CreatedAt.String())
+		fmt.Println()
 	}
 }
 
@@ -145,7 +149,7 @@ func testUpdate(db *gorm.DB) {
 		fmt.Scan(&uFieldName)
 		fmt.Print("\nEnter Updated Value: ")
 		fmt.Scan(&uValue)
-		
+
 		db.Where("Name = ?", uUserName).First(&updateUser).Update(uFieldName, uValue)
 		fmt.Println("\nStored Information:\nUserName: " + updateUser.Name + "\nPassword: " + updateUser.Password)
 		fmt.Println("Allergies: " + updateUser.Allergies + "\nCreatedAt: " + updateUser.CreatedAt.String())
@@ -156,7 +160,7 @@ func testUpdate(db *gorm.DB) {
 func testHardDelete(db *gorm.DB) {
 	//This function hard deletes values in the database
 	//this can be used later as a framework to build future delete functions
-	
+
 	hardDeletes := 0
 	fmt.Print("Enter Number of HardDeletes: ")
 	fmt.Scan(&hardDeletes)
@@ -185,9 +189,48 @@ func testHardDelete(db *gorm.DB) {
 	}
 }
 
+type Account struct {
+	Name     string `json:"name" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
+
+func errorResponse(err error) gin.H {
+	return gin.H{"error": err.Error()}
+}
+
+func createAcc(ctx *gin.Context) {
+	// user validation
+	var req Account
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	accCreationObject := Account{
+		Name:     req.Name,
+		Password: req.Password,
+	}
+
+	// need to update the add use function to accept diff parameters
+	account, err := db.addUser(ctx, accCreationObject)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, account)
+}
+
 func main() {
 
 	db := connnectDB("test")
+
+	router := gin.Default()
+	router.POST("/accounts", db.createAccount)
+	router.Run("localhost:8080")
+
+	// testing
+
 	buildTables(db)
 
 	testUserAdd(db)
