@@ -6,8 +6,8 @@
 <p>4. As a frequent user of the site, I want to be able to leave notes/comments about recipes that I've tried before so I know if I'd like to make any changes/adjustments to the given recipe incase I want it again.</p>
 <h3>Issues to address</h3>
 <p>1. Create a front-end with a search bar</p>
-<p>2. Include a login page</p>
-<p>3. The backend should be able to store basic user data such as: user names, passwords, allergies and favorited recipes.</p>
+<p>2. Include a login page </p>
+<p>3. The backend should be able to store basic user data such as: user names, passwords, and allergies. (Completed) </p>
 <p>We accomplished most of our goals for this sprint.</p>
 <p> We were able to successfully create a database that stores usernames, passwords, admin level and allergies. However, we have not stored the favorited recipes yet as we have not come to a consensus on how to properly keep track of them. 
 <p>We successfully completed the basis for the outline of what we would like the homepage of our website to look like. We implemented a very basic search bar</p>
