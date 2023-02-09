@@ -9,3 +9,5 @@
 <p>2. Include a login page</p>
 <p>3. The backend should be able to store basic user data such as: user names, passwords, allergies and favorited recipes.</p>
 <p>We successfully completed all of them.</p>
+<p>We successfully completed the basis for the outline of what we would like the homepage of our website to look like. We implemented a very basic search bar</p>
+<p>We did not complete the search bar that would allow for the written items to be saved and tagged. This would require type script code that we have yet to begin. We realized we had a lot of html and css to touch on and learn before we begin our type script code. Making a search bar with tagged items would require storing each item when the search button is clicked through a function made in the type script file.</p>
