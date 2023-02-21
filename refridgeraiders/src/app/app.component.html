@@ -1,13 +1,33 @@
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * The content below * * * * * * * * * * * -->
-<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
-<!-- * * * * * * * * * * and can be replaced. * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * Delete the template below * * * * * * * * * * -->
-<!-- * * * * * * * to get started with your project! * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<mat-toolbar color="primary"><img
+  width="35"
+  alt="KitchenRescue Logo"
+  src="https://cdn.iconscout.com/icon/premium/png-512-thumb/fridge-2589829-2160501.png?f=avif&w=512"
+/>
+</mat-toolbar>
+
+<div><h1>KitchenRescue</h1></div>
+<div class="center"><mat-form-field appearance="outline">
+  <mat-label>Search recipes</mat-label>
+  <input matInput type="text"/>
+  <mat-icon matPrefix>search</mat-icon>
+</mat-form-field></div>
+
 
 <style>
+  h1 {
+    color: rgb(0, 0, 0);
+    font-family: 'Helvetica', sans-serif;
+    font-size: 50px;
+    text-align: center;
+  }
+  center {
+    margin-left: 100px;
+    margin-right: 100px;
+    width: 50%;
+  }
+</style>
+
+<!--<style>
   :host {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     font-size: 14px;
@@ -120,7 +140,7 @@ body{
 
 </style>
 
-<!-- Toolbar -->
+Toolbar
 <div class="toolbar" role="banner">
   <img
     width="40"
@@ -150,6 +170,4 @@ body{
     </button>
   </div>
 </div>
-
-
-<router-outlet></router-outlet>
+-->
