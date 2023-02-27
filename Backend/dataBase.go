@@ -31,7 +31,7 @@ type UserProfileJson struct {
 }
 
 // sets up Sqlite3 database
-func connnectDB(dbName string) *gorm.DB {
+func connectDB(dbName string) *gorm.DB {
 	dbName += ".db"
 	db, err := gorm.Open(sqlite.Open(dbName), &gorm.Config{})
 	if err != nil {
@@ -55,8 +55,8 @@ func handleUserPost(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&newUserJson)
 
 	user := UserProfile{Name: newUserJson.Name, Password: newUserJson.Password, AdminLevel: newUserJson.AdminLevel, Allergies: newUserJson.Allergies}
-	addUser(&user, connnectDB("test"))//test db name
-	json.NewEncoder(w).Encode(&newUserJson)
+	addUser(&user, connectDB("test")) //test db name
+	json.NewEncoder(w).Encode(newUserJson)
 }
 
 func handleUserGet(w http.ResponseWriter, r *http.Request) {
@@ -64,13 +64,14 @@ func handleUserGet(w http.ResponseWriter, r *http.Request) {
 	var loginJson UserProfileJson
 	json.NewDecoder(r.Body).Decode(&loginJson)
 
-	valid, user := loginUser(loginJson.Name, loginJson.Password, connnectDB("test"))//test db name
+	valid, user := loginUser(loginJson.Name, loginJson.Password, connectDB("test")) //test db name
 	if valid {
 		loginJson = UserProfileJson{Name: user.Name, Password: user.Password, AdminLevel: user.AdminLevel, Allergies: user.Allergies}
 		json.NewEncoder(w).Encode(&loginJson)
 	} else {
 		json.NewEncoder(w).Encode(&UserProfileJson{})
 	}
+
 }
 
 func handleUserPut(w http.ResponseWriter, r *http.Request) {
@@ -78,9 +79,9 @@ func handleUserPut(w http.ResponseWriter, r *http.Request) {
 	var loginJson UserProfileJson
 	json.NewDecoder(r.Body).Decode(&loginJson)
 
-	db := connnectDB("test")
+	db := connectDB("test")
 	var updateUser UserProfile
-	valid, user := loginUser(loginJson.Name, loginJson.Password, db)//test db name
+	valid, user := loginUser(loginJson.Name, loginJson.Password, db) //test db name
 	if valid {
 		db.Where("Name = ?", user.Name).First(&updateUser).Update("Allergies", loginJson.Allergies)
 		db.Where("Name = ?", user.Name).First(&updateUser).Update("AdminLevel", loginJson.AdminLevel)
@@ -89,6 +90,24 @@ func handleUserPut(w http.ResponseWriter, r *http.Request) {
 	} else {
 		json.NewEncoder(w).Encode(&UserProfileJson{})
 	}
+}
+
+func handleUserDelete(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "application/json")
+	var deleteJson UserProfileJson
+	json.NewDecoder(r.Body).Decode(&deleteJson)
+
+	db := connectDB("test")
+	valid, user := testSoftDelete(deleteJson.Name, deleteJson.Password, db)
+	if valid {
+		json.NewEncoder(w).Encode("user not found!")
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode("album deleted successfully")
+
 }
 
 // adding users function: future use when more tables added
