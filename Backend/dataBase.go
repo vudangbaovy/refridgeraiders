@@ -71,8 +71,24 @@ func handleUserGet(w http.ResponseWriter, r *http.Request) {
 	} else {
 		json.NewEncoder(w).Encode(&UserProfileJson{})
 	}
-	
+}
 
+func handleUserPut(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var loginJson UserProfileJson
+	json.NewDecoder(r.Body).Decode(&loginJson)
+
+	db := connnectDB("test")
+	var updateUser UserProfile
+	valid, user := loginUser(loginJson.Name, loginJson.Password, db)//test db name
+	if valid {
+		db.Where("Name = ?", user.Name).First(&updateUser).Update("Allergies", loginJson.Allergies)
+		db.Where("Name = ?", user.Name).First(&updateUser).Update("AdminLevel", loginJson.AdminLevel)
+		loginJson = UserProfileJson{Name: updateUser.Name, Password: updateUser.Password, AdminLevel: updateUser.AdminLevel, Allergies: updateUser.Allergies}
+		json.NewEncoder(w).Encode(&loginJson)
+	} else {
+		json.NewEncoder(w).Encode(&UserProfileJson{})
+	}
 }
 
 // adding users function: future use when more tables added
