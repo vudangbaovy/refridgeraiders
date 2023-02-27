@@ -56,7 +56,23 @@ func handleUserPost(w http.ResponseWriter, r *http.Request) {
 
 	user := UserProfile{Name: newUserJson.Name, Password: newUserJson.Password, AdminLevel: newUserJson.AdminLevel, Allergies: newUserJson.Allergies}
 	addUser(&user, connnectDB("test"))//test db name
-	json.NewEncoder(w).Encode(newUserJson)
+	json.NewEncoder(w).Encode(&newUserJson)
+}
+
+func handleUserGet(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var loginJson UserProfileJson
+	json.NewDecoder(r.Body).Decode(&loginJson)
+
+	valid, user := loginUser(loginJson.Name, loginJson.Password, connnectDB("test"))//test db name
+	if valid {
+		loginJson = UserProfileJson{Name: user.Name, Password: user.Password, AdminLevel: user.AdminLevel, Allergies: user.Allergies}
+		json.NewEncoder(w).Encode(&loginJson)
+	} else {
+		json.NewEncoder(w).Encode(&UserProfileJson{})
+	}
+	
+
 }
 
 // adding users function: future use when more tables added

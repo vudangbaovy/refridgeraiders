@@ -15,6 +15,7 @@ func httpHandler() http.Handler {
 	// Your REST API requests go here
 
 	router.HandleFunc("/User", handleUserPost).Methods("POST")
+	router.HandleFunc("/User", handleUserGet).Methods("GET")
 
 	// Add your routes here.
 	// WARNING: this route must be the last route defined.
