@@ -14,7 +14,7 @@ func httpHandler() http.Handler {
 	router := mux.NewRouter()
 	// Your REST API requests go here
 
-	router.HandleFunc("/books/{title}/page/{page}", ).Methods("GET")
+	router.HandleFunc("/User", newUserProfile).Methods("POST")
 
 	// Add your routes here.
 	// WARNING: this route must be the last route defined.

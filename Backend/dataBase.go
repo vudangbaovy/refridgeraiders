@@ -7,6 +7,9 @@ use command "go run ." to run with main.go
 
 import (
 	"fmt"
+	"net/http"
+
+	"github.com/gorilla/mux"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -38,7 +41,7 @@ func buildTables(db *gorm.DB) {
 }
 
 // adding users function: future use when more tables added
-func addUser(addUser *UserProfile, db *gorm.DB)(bool, *UserProfile) {
+func addUserDB(addUser *UserProfile, db *gorm.DB)(bool, *UserProfile) {
 	searchUser := UserProfile{}
 	db.Where("Name = ?", addUser.Name).First(&searchUser)
 
@@ -49,8 +52,9 @@ func addUser(addUser *UserProfile, db *gorm.DB)(bool, *UserProfile) {
 	return false, &searchUser
 }
 
-func newUserProfile(inputUserName string, inputPassword string, inputAllergies string, db *gorm.DB)(bool, *UserProfile) {
-	userAdded, account := addUser(&UserProfile{Name: inputUserName, Password: inputPassword, AdminLevel: 0, Allergies: inputAllergies}, db)
+func newUserProfile() {
+	mux.Vars()
+	userAdded, account := addUserDB(&UserProfile{Name: inputUserName, Password: inputPassword, AdminLevel: 0, Allergies: inputAllergies}, db)
 	return userAdded, account
 }
 
