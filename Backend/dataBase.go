@@ -17,10 +17,10 @@ import (
 // user profile definition
 type UserProfile struct {
 	gorm.Model
-	Name  		string
-	Password 	string
-	AdminLevel 	uint8
-	Allergies 	string
+	Name       string
+	Password   string
+	AdminLevel uint8
+	Allergies  string
 }
 
 // sets up Sqlite3 database
@@ -40,8 +40,14 @@ func buildTables(db *gorm.DB) {
 	db.AutoMigrate(&UserProfile{})
 }
 
+func handleUserPost(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	username := vars["title"]
+	newUserProfile(username, password, allergies)
+}
+
 // adding users function: future use when more tables added
-func addUserDB(addUser *UserProfile, db *gorm.DB)(bool, *UserProfile) {
+func addUser(addUser *UserProfile, db *gorm.DB) (bool, *UserProfile) {
 	searchUser := UserProfile{}
 	db.Where("Name = ?", addUser.Name).First(&searchUser)
 
@@ -52,13 +58,12 @@ func addUserDB(addUser *UserProfile, db *gorm.DB)(bool, *UserProfile) {
 	return false, &searchUser
 }
 
-func newUserProfile() {
-	mux.Vars()
-	userAdded, account := addUserDB(&UserProfile{Name: inputUserName, Password: inputPassword, AdminLevel: 0, Allergies: inputAllergies}, db)
+func newUserProfile(inputUserName string, inputPassword string, inputAllergies string, db *gorm.DB) (bool, *UserProfile) {
+	userAdded, account := addUser(&UserProfile{Name: inputUserName, Password: inputPassword, AdminLevel: 0, Allergies: inputAllergies}, db)
 	return userAdded, account
 }
 
-func loginUser(inputUserName string, inputPassword string, db *gorm.DB)(bool, *UserProfile) {
+func loginUser(inputUserName string, inputPassword string, db *gorm.DB) (bool, *UserProfile) {
 	//function tests inputted username and password against database, returns true and user's profile struct if successful
 	//returns false and empty struct if unsuccessful
 	user := UserProfile{}
@@ -112,21 +117,21 @@ func testLoginUser(db *gorm.DB) {
 
 func testUserSearch(db *gorm.DB) {
 	//Function is a framework for a future function to query database
-	
+
 	numberOfEntries := 0
 	fmt.Print("Enter Number of Queries: ")
 	fmt.Scan(&numberOfEntries)
 
 	for i := 0; i < numberOfEntries; i++ {
-	var searchName string
-	var foundUser UserProfile
-	fmt.Print("Enter UserName To Search: ")
-	fmt.Scan(&searchName)
-	db.Where("Name = ?", searchName).First(&foundUser)
+		var searchName string
+		var foundUser UserProfile
+		fmt.Print("Enter UserName To Search: ")
+		fmt.Scan(&searchName)
+		db.Where("Name = ?", searchName).First(&foundUser)
 
-	fmt.Println("\nStored Information:\nUserName: " + foundUser.Name + "\nPassword: " + foundUser.Password)
-	fmt.Println("Allergies: " + foundUser.Allergies + "\nCreatedAt: " + foundUser.CreatedAt.String())
-	fmt.Println()
+		fmt.Println("\nStored Information:\nUserName: " + foundUser.Name + "\nPassword: " + foundUser.Password)
+		fmt.Println("Allergies: " + foundUser.Allergies + "\nCreatedAt: " + foundUser.CreatedAt.String())
+		fmt.Println()
 	}
 }
 
@@ -192,7 +197,7 @@ func testUpdate(db *gorm.DB) {
 		fmt.Scan(&uFieldName)
 		fmt.Print("\nEnter Updated Value: ")
 		fmt.Scan(&uValue)
-		
+
 		db.Where("Name = ?", uUserName).First(&updateUser).Update(uFieldName, uValue)
 		fmt.Println("\nStored Information:\nUserName: " + updateUser.Name + "\nPassword: " + updateUser.Password)
 		fmt.Println("Allergies: " + updateUser.Allergies + "\nCreatedAt: " + updateUser.CreatedAt.String())
@@ -203,7 +208,7 @@ func testUpdate(db *gorm.DB) {
 func testHardDelete(db *gorm.DB) {
 	//This function hard deletes values in the database
 	//this can be used later as a framework to build future delete functions
-	
+
 	hardDeletes := 0
 	fmt.Print("Enter Number of HardDeletes: ")
 	fmt.Scan(&hardDeletes)
