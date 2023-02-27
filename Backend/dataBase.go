@@ -6,10 +6,10 @@ use command "go run ." to run with main.go
 */
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
-	"github.com/gorilla/mux"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -41,9 +41,13 @@ func buildTables(db *gorm.DB) {
 }
 
 func handleUserPost(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	username := vars["title"]
-	newUserProfile(username, password, allergies)
+
+	w.Header().Set("Content-Type", "application/json")
+	var newUser UserProfile
+	json.NewDecoder(r.Body).Decode(&newUser)
+	db.addUser(&newUser)
+	json.NewEncoder(w).Encode(newUser)
+
 }
 
 // adding users function: future use when more tables added
