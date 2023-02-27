@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 )
@@ -13,7 +14,8 @@ use command "go run ." while in the backend directory for the go files to run
 
 func main() {
 
-	host := "127.0.0.1:8081"
+	fmt.Println("starting")
+	host := "localhost:8080"
 	if err := http.ListenAndServe(host, httpHandler()); err != nil {
 		log.Fatalf("Failed to listen on %s: %v", host, err)
 	}

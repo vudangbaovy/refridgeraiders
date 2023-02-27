@@ -19,7 +19,7 @@ func httpHandler() http.Handler {
 	// Add your routes here.
 	// WARNING: this route must be the last route defined.
 
-	router.PathPrefix("/").Handler(AngularHandler).Methods("GET")
+	//router.PathPrefix("/").Handler(AngularHandler).Methods("GET")
 
 	/**
 	 * We need some headers to be statically prepended to every response.
