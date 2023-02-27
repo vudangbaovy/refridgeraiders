@@ -32,6 +32,7 @@ func connnectDB(dbName string) *gorm.DB {
 	} else {
 		fmt.Println("conncected to test.db")
 	}
+	buildTables(db)
 	return db
 }
 
