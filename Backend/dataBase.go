@@ -23,6 +23,13 @@ type UserProfile struct {
 	Allergies  string
 }
 
+type UserProfileJson struct {
+	Name       string `json:"name"`
+	Password   string `json:"password"`
+	AdminLevel uint8  `json:"adminLevel"`
+	Allergies  string `json:"allergies"`
+}
+
 // sets up Sqlite3 database
 func connnectDB(dbName string) *gorm.DB {
 	dbName += ".db"
@@ -44,11 +51,12 @@ func buildTables(db *gorm.DB) {
 func handleUserPost(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
-	var newUser UserProfile
-	json.NewDecoder(r.Body).Decode(&newUser)
-	addUser(&newUser, connnectDB("test"))//test db name
-	json.NewEncoder(w).Encode(newUser)
+	var newUserJson UserProfileJson
+	json.NewDecoder(r.Body).Decode(&newUserJson)
 
+	user := UserProfile{Name: newUserJson.Name, Password: newUserJson.Password, AdminLevel: newUserJson.AdminLevel, Allergies: newUserJson.Allergies}
+	addUser(&user, connnectDB("test"))//test db name
+	json.NewEncoder(w).Encode(newUserJson)
 }
 
 // adding users function: future use when more tables added
