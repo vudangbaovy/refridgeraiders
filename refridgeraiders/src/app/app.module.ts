@@ -11,16 +11,20 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldControl } from '@angular/material/form-field';
-import { HomePageComponent } from './component/home-page/home-page.component';
-import { SearchBarComponent } from './component/search-bar/search-bar.component';
 import { DataService } from './data.service';
 import { HttpClientModule } from '@angular/common/http';
+import { LoginComponent } from './login/login.component';
+import { RouterModule, Routes } from '@angular/router';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { MatButtonModule} from '@angular/material/button';
+import { AppRoutingModule } from './app-routing.module';
+import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    //HomePageComponent,
-    //SearchBarComponent,
+    LoginComponent,
+    HomeComponent,
   ],
   imports: [
     BrowserModule,
@@ -33,8 +37,12 @@ import { HttpClientModule } from '@angular/common/http';
     MatChipsModule,
     MatFormFieldModule,
     MatToolbarModule,
-    MatCardModule
+    MatCardModule,
+    FlexLayoutModule,
+    MatButtonModule,
+    AppRoutingModule
   ],
+  exports: [RouterModule],
   providers: [
     DataService
   ],

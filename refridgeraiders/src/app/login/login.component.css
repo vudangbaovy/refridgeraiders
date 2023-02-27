@@ -1,0 +1,17 @@
+.main-div mat-card {
+    padding: 10px;
+}
+
+.main-div mat-toolbar {
+    background-color: #5e9b81;
+    color: white;
+    text-align: center;
+}
+
+.login-form {
+    padding: 20px;
+}
+
+button mat-raised-button {
+    color: #5e9b81;
+}

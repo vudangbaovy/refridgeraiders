@@ -2,6 +2,31 @@
     font-size: 30px;
 }
 
-/* .content img{
-    margin-left: -500px;
-} */
+.container {
+    margin: 48px;
+    font-family: "Arial", sans-serif;
+}
+.navbar {
+    background-color: #5e9b81;
+    padding: 30px 50px;
+    display: flex;
+    align-items: center;
+    font-family: sans-serif;
+}
+
+.link:first-of-type {
+    margin-right: 32px;
+}
+
+.link {
+    color: white;
+    text-decoration: none;
+    font-size: 14pt;
+    font-weight: bold;
+}
+
+button {
+    background-color: #5e9b81;
+    padding: 4px 8px;
+    cursor: pointer;
+}
