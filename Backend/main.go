@@ -17,11 +17,9 @@ func main() {
 	if err := http.ListenAndServe(host, httpHandler()); err != nil {
 		log.Fatalf("Failed to listen on %s: %v", host, err)
 	}
-
 	/*
 		db := connnectDB("test")
 		buildTables(db)
-
 		testUserAdd(db)
 		testUserSearch(db)
 		testLoginUser(db)

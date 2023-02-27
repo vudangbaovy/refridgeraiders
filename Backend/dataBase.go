@@ -45,7 +45,7 @@ func handleUserPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var newUser UserProfile
 	json.NewDecoder(r.Body).Decode(&newUser)
-	db.addUser(&newUser)
+	addUser(&newUser, connnectDB("test"))//test db name
 	json.NewEncoder(w).Encode(newUser)
 
 }
@@ -60,11 +60,6 @@ func addUser(addUser *UserProfile, db *gorm.DB) (bool, *UserProfile) {
 		return true, addUser
 	}
 	return false, &searchUser
-}
-
-func newUserProfile(inputUserName string, inputPassword string, inputAllergies string, db *gorm.DB) (bool, *UserProfile) {
-	userAdded, account := addUser(&UserProfile{Name: inputUserName, Password: inputPassword, AdminLevel: 0, Allergies: inputAllergies}, db)
-	return userAdded, account
 }
 
 func loginUser(inputUserName string, inputPassword string, db *gorm.DB) (bool, *UserProfile) {
