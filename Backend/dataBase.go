@@ -46,7 +46,7 @@ func buildTables(db *gorm.DB) {
 	db.AutoMigrate(&UserProfile{})
 }
 
-func handleUserPost(w http.ResponseWriter, r *http.Request) {
+func UserRegisterPost(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	var newUserJson UserProfileJson
@@ -57,7 +57,7 @@ func handleUserPost(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(newUserJson)
 }
 
-func handleUserGet(w http.ResponseWriter, r *http.Request) {
+func UserPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var loginJson UserProfileJson
 	json.NewDecoder(r.Body).Decode(&loginJson)
@@ -72,25 +72,22 @@ func handleUserGet(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func handleUserPut(w http.ResponseWriter, r *http.Request) {
+func UserPut(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var loginJson UserProfileJson
 	json.NewDecoder(r.Body).Decode(&loginJson)
 
-	db := connectDB("test")
-	var updateUser UserProfile
-	valid, user := loginUser(loginJson.Name, loginJson.Password, db) //test db name
+	db := connectDB("test")//test db name
+	valid, user := loginUser(loginJson.Name, loginJson.Password, db) //returns if valid user and the user profile
 	if valid {
-		db.Where("Name = ?", user.Name).First(&updateUser).Update("Allergies", loginJson.Allergies)
-		db.Where("Name = ?", user.Name).First(&updateUser).Update("AdminLevel", loginJson.AdminLevel)
-		loginJson = UserProfileJson{Name: updateUser.Name, Password: updateUser.Password, AdminLevel: updateUser.AdminLevel, Allergies: updateUser.Allergies}
+		loginJson = UserProfileJson{Name: user.Name, Password: user.Password, AdminLevel: user.AdminLevel, Allergies: user.Allergies}
 		json.NewEncoder(w).Encode(&loginJson)
 	} else {
 		json.NewEncoder(w).Encode(&UserProfileJson{})
 	}
 }
 
-func handleUserDelete(w http.ResponseWriter, r *http.Request) {
+func UserDelete(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	var deleteJson UserProfileJson
@@ -123,8 +120,8 @@ func loginUser(inputUserName string, inputPassword string, db *gorm.DB) (bool, *
 	//function tests inputted username and password against database, returns true and user's profile struct if successful
 	//returns false and empty struct if unsuccessful
 	user := UserProfile{}
-	db.Where("Name = ?", inputUserName).First(&user)
-	if user.ID == 0 || user.Password != inputPassword {
+	err := db.Where("Name = ?", inputUserName).First(&user)
+	if err.Error == nil || user.Password != inputPassword {
 		return false, &UserProfile{}
 	}
 	return true, &user

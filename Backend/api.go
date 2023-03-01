@@ -14,10 +14,11 @@ func httpHandler() http.Handler {
 	router := mux.NewRouter()
 	// Your REST API requests go here
 
-	router.HandleFunc("/User", handleUserPost).Methods("POST")
-	router.HandleFunc("/User", handleUserPut).Methods("PUT")
-	router.HandleFunc("/User", handleUserGet).Methods("GET")
-	router.HandleFunc("/User", handleUserDelete).Methods("DELETE")
+	//TODO: Change login to a post request add a post request for creating an account registration
+	router.HandleFunc("/User", UserPost).Methods("POST")
+	router.HandleFunc("/User", UserPut).Methods("PUT")
+	router.HandleFunc("/User", UserDelete).Methods("DELETE")
+	router.HandleFunc("/User/Register", UserRegisterPost).Methods("GET")
 
 	// Add your routes here.
 	// WARNING: this route must be the last route defined.
