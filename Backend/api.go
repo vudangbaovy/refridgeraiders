@@ -17,6 +17,7 @@ func httpHandler() http.Handler {
 	router.HandleFunc("/User", handleUserPost).Methods("POST")
 	router.HandleFunc("/User", handleUserPut).Methods("PUT")
 	router.HandleFunc("/User", handleUserGet).Methods("GET")
+	router.HandleFunc("/User", handleUserDelete).Methods("DELETE")
 	
 
 	// Add your routes here.

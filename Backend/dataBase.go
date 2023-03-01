@@ -99,15 +99,14 @@ func handleUserDelete(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&deleteJson)
 
 	db := connectDB("test")
-	valid, user := testSoftDelete(deleteJson.Name, deleteJson.Password, db)
-	if valid {
-		json.NewEncoder(w).Encode("user not found!")
-		return
+	var deleteUser UserProfile
+	db.Where("Name = ?", deleteJson.Name).First(&deleteUser)
+	if deleteUser.ID != 0 && deleteJson.Password == deleteUser.Password {
+		db.Delete(&deleteUser)
+		json.NewEncoder(w).Encode(&deleteJson)
+	} else {
+		json.NewEncoder(w).Encode(&UserProfileJson{})
 	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode("album deleted successfully")
-
 }
 
 // adding users function: future use when more tables added
