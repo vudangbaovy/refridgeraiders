@@ -1,20 +1,18 @@
-.toolbar {
-    font-size: 30px;
-}
-
 .container {
     margin: 48px;
-    font-family: "Arial", sans-serif;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+
 .navbar {
     background-color: #5e9b81;
-    padding: 30px 50px;
+    padding: 10px 30px;
     display: flex;
     align-items: center;
     font-family: sans-serif;
 }
 
 .link:first-of-type {
+    margin-left: 32px;
     margin-right: 32px;
 }
 
@@ -22,11 +20,13 @@
     color: white;
     text-decoration: none;
     font-size: 14pt;
-    font-weight: bold;
+    cursor: pointer;
 }
 
-button {
-    background-color: #5e9b81;
-    padding: 4px 8px;
+.right-link {
+    margin-left: auto;
+    color: white;
+    text-decoration: none;
+    font-size: 14pt;
     cursor: pointer;
 }
