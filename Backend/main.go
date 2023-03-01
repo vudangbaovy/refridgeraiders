@@ -25,6 +25,11 @@ func main() {
 
 	}
 
+	var user UserProfile
+	connectDB("test").First(&user)
+	fmt.Println(user.Name)
+	fmt.Println(user.Password)
+
 	host := "localhost:4200"
 	if err := http.ListenAndServe(host, httpHandler()); err != nil {
 		log.Fatalf("Failed to listen on %s: %v", host, err)
