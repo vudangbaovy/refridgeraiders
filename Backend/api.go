@@ -18,12 +18,11 @@ func httpHandler() http.Handler {
 	router.HandleFunc("/User", handleUserPut).Methods("PUT")
 	router.HandleFunc("/User", handleUserGet).Methods("GET")
 	router.HandleFunc("/User", handleUserDelete).Methods("DELETE")
-	
 
 	// Add your routes here.
 	// WARNING: this route must be the last route defined.
 
-	//router.PathPrefix("/").Handler(AngularHandler).Methods("GET")
+	router.PathPrefix("/").Handler(AngularHandler).Methods("GET")
 
 	/**
 	 * We need some headers to be statically prepended to every response.
