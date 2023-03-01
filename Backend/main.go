@@ -15,7 +15,7 @@ use command "go run ." while in the backend directory for the go files to run
 func main() {
 
 	fmt.Println("starting")
-	host := "localhost:8080"
+	host := "localhost:4200"
 	if err := http.ListenAndServe(host, httpHandler()); err != nil {
 		log.Fatalf("Failed to listen on %s: %v", host, err)
 	}
