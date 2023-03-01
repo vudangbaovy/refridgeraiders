@@ -110,9 +110,9 @@ func handleUserDelete(w http.ResponseWriter, r *http.Request) {
 // adding users function: future use when more tables added
 func addUser(addUser *UserProfile, db *gorm.DB) (bool, *UserProfile) {
 	searchUser := UserProfile{}
-	db.Where("Name = ?", addUser.Name).First(&searchUser)
+	err := db.Where("Name = ?", addUser.Name).First(&searchUser)
 
-	if searchUser.ID == 0 {
+	if err.Error != nil {
 		db.Create(&addUser)
 		return true, addUser
 	}

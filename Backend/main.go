@@ -22,7 +22,6 @@ func main() {
 	fmt.Println("Finished DB Tests")
 	for i, v := range results {
 		fmt.Printf("Test %d %t\n", i, v)
-
 	}
 
 	var user UserProfile

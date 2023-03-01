@@ -1,6 +1,7 @@
 package main
 
 import (
+	
 	"fmt"
 	"strconv"
 
@@ -18,11 +19,13 @@ func testUserAdd(db *gorm.DB)(bool) {
 	var tempUser UserProfile
 	db.Last(&tempUser)
 
+	fmt.Println("\ntempUserID: ", tempUser.ID)
+
 	for  i := uint(0); i < numberOfEntries; i++ { //starts at last id so no duplicates in db accidently get deleted
-		insertedUsers[i].Name = "userName" + strconv.FormatUint(uint64(i + tempUser.ID), 10)//creates userprofiles and adds them to db
-		insertedUsers[i].Password = "password" + strconv.FormatUint(uint64(i + tempUser.ID), 10)
+		insertedUsers[i].Name = "userName" + strconv.FormatUint(uint64(i + tempUser.ID + 1), 10)//creates userprofiles and adds them to db
+		insertedUsers[i].Password = "password" + strconv.FormatUint(uint64(i + tempUser.ID + 1), 10)
 		insertedUsers[i].AdminLevel = uint8(i)
-		insertedUsers[i].Allergies = "Allergies" + strconv.FormatUint(uint64(i + tempUser.ID), 10)
+		insertedUsers[i].Allergies = "Allergies" + strconv.FormatUint(uint64(i + tempUser.ID + 1), 10)
 		addUser(&insertedUsers[i], db)
 	}
 
@@ -74,6 +77,11 @@ func testUserSearch(db *gorm.DB)(bool) {
 }
 
 func testUserGet()(bool) {
+
+	//var w http.ResponseWriter
+	//userJson := UserProfileJson{Name: "Nick", Password: "Pwe2", AdminLevel: 0, Allergies: ""}
+	//json.NewEncoder(w).Encode(&userJson)
+
 	r, err := http.NewRequest(http.MethodGet, "http://localhost:4200/Users", nil)
 	if err != nil {
 		fmt.Printf("client: could not create request: %s\n", err)
