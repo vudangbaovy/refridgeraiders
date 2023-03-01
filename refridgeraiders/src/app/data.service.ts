@@ -9,10 +9,10 @@ import { User } from './user';
 })
 
 export class DataService {
-  private loginUrl = 'http://localhost:4200/User';
+  private loginUrl = 'http://localhost:3000/User';
 
   constructor(private http: HttpClient) { }
   loginUser(user: User) {
-    return this.http.get<any>(this.loginUrl)
+    return this.http.post<any>(this.loginUrl, user)
   }
 }
