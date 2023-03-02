@@ -18,14 +18,12 @@ type UserProfile struct {
 	gorm.Model
 	Name       string
 	Password   string
-	AdminLevel uint8
 	Allergies  string
 }
 
 type UserProfileJson struct {
 	Name       string `json:"name"`
 	Password   string `json:"password"`
-	AdminLevel uint8  `json:"adminLevel"`
 	Allergies  string `json:"allergies"`
 }
 
@@ -52,7 +50,7 @@ func UserRegisterPost(w http.ResponseWriter, r *http.Request) {
 	var newUserJson UserProfileJson
 	json.NewDecoder(r.Body).Decode(&newUserJson)
 
-	user := UserProfile{Name: newUserJson.Name, Password: newUserJson.Password, AdminLevel: newUserJson.AdminLevel, Allergies: newUserJson.Allergies}
+	user := UserProfile{Name: newUserJson.Name, Password: newUserJson.Password, Allergies: newUserJson.Allergies}
 	addUser(&user, connectDB("test")) //test db name
 	json.NewEncoder(w).Encode(newUserJson)
 }
@@ -64,7 +62,7 @@ func UserPost(w http.ResponseWriter, r *http.Request) {
 
 	valid, user := loginUser(loginJson.Name, loginJson.Password, connectDB("test")) //test db name
 	if valid {
-		loginJson = UserProfileJson{Name: user.Name, Password: user.Password, AdminLevel: user.AdminLevel, Allergies: user.Allergies}
+		loginJson = UserProfileJson{Name: user.Name, Password: user.Password, Allergies: user.Allergies}
 		json.NewEncoder(w).Encode(&loginJson)
 	} else {
 		json.NewEncoder(w).Encode(&UserProfileJson{})
@@ -80,7 +78,7 @@ func UserPut(w http.ResponseWriter, r *http.Request) {
 	db := connectDB("test")//test db name
 	valid, user := loginUser(loginJson.Name, loginJson.Password, db) //returns if valid user and the user profile
 	if valid {
-		loginJson = UserProfileJson{Name: user.Name, Password: user.Password, AdminLevel: user.AdminLevel, Allergies: user.Allergies}
+		loginJson = UserProfileJson{Name: user.Name, Password: user.Password, Allergies: user.Allergies}
 		json.NewEncoder(w).Encode(&loginJson)
 	} else {
 		json.NewEncoder(w).Encode(&UserProfileJson{})
@@ -107,7 +105,7 @@ func UserDelete(w http.ResponseWriter, r *http.Request) {
 // adding users function: future use when more tables added
 func addUser(addUser *UserProfile, db *gorm.DB) (bool, *UserProfile) {
 	searchUser := UserProfile{}
-	err := db.Where("Name = ?", addUser.Name).First(&searchUser)
+	err := db.Limit(1).Find("Name = ?", addUser.Name).First(&searchUser)
 
 	if err.Error != nil {
 		db.Create(&addUser)
@@ -120,7 +118,7 @@ func loginUser(inputUserName string, inputPassword string, db *gorm.DB) (bool, *
 	//function tests inputted username and password against database, returns true and user's profile struct if successful
 	//returns false and empty struct if unsuccessful
 	user := UserProfile{}
-	err := db.Where("Name = ?", inputUserName).First(&user)
+	err := db.Limit(1).Find("Name = ?", inputUserName).First(&user)
 	if err.Error == nil || user.Password != inputPassword {
 		return false, &UserProfile{}
 	}
