@@ -20,3 +20,5 @@ If there there is something wrong with what is sent, i.e. wrong password, we cur
 <p>&emsp;    "password": "pa442rd",</p>
 <p>&emsp;    "adminLevel": 2,</p>
 <p>&emsp;    "allergies": "Peanuts,Milk"<h6></p>
+<p>Connect to external Database API named edemam. User types in food they desire to consume, click a button, and recieve a JSON file describing different recipes containing desired ingredient</p>
+<p>Front end tests: Button click test ensuring the button that the user clicks to enter ingredient works and fetchData() test which ensures function that grabs data from API regarding users input, works</p>
