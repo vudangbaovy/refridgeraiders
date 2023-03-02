@@ -50,13 +50,14 @@ func UserRegisterPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var newUserJson UserProfileJson
 	json.NewDecoder(r.Body).Decode(&newUserJson)
-
+	fmt.Println("Hello")
 	user := UserProfile{Name: newUserJson.Name, Password: newUserJson.Password, Allergies: newUserJson.Allergies}
 	addUser(&user, connectDB("test")) //test db name
 	json.NewEncoder(w).Encode(newUserJson)
 }
 
 func UserPost(w http.ResponseWriter, r *http.Request) {
+
 	w.Header().Set("Content-Type", "application/json")
 	var loginJson UserProfileJson
 	json.NewDecoder(r.Body).Decode(&loginJson)
@@ -72,6 +73,7 @@ func UserPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func UserPut(w http.ResponseWriter, r *http.Request) {
+
 	w.Header().Set("Content-Type", "application/json")
 	var loginJson UserProfileJson
 	json.NewDecoder(r.Body).Decode(&loginJson)
