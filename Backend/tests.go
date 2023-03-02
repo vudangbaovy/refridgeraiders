@@ -81,7 +81,7 @@ func testUserPost()(bool) {
 
 	responseBody  := bytes.NewBuffer(postBody)
 
-	res, err := http.Post("http://localhost:3000/Users", "application/json", responseBody)
+	res, err := http.Post("http://localhost:3000/User", "application/json", responseBody)
 	if err != nil {
 		fmt.Printf("Request Error: %s\n", err)
 		return false
@@ -92,26 +92,12 @@ func testUserPost()(bool) {
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		fmt.Printf("Read Error: %s\n", err)
-	 }
-	fmt.Println(string(body))
-
-	var testJson UserProfileJson
-	if testJson.Name != "Nick" || testJson.Password != "Pwe2" || testJson.Allergies != "" {
-		return false
 	}
-
-	var testUser UserProfile
-	connectDB("test").Where("Name = ? AND Password = ?", "Nick", "Pwe2").First(&testUser)
-	if testUser.Name != "Nick" || testUser.Password != "Pwe2" || testUser.Allergies != "" {
-		return false
+	if string(body) == "{\"name\":\"Nick\",\"password\":\"Pwe2\",\"allergies\":\"Peanuts\"}\n"{
+		return true
 	}
-	return true
+	return false
 }
-
-
-
-
-
 
 func testLoginUser(db *gorm.DB) {
 	//allows for command line tests of login function

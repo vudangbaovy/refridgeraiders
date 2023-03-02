@@ -16,7 +16,7 @@ func main() {
 	db := connectDB("test")
 	buildTables(db)
 	
-	if (false) {
+	if (true) {
 		var user UserProfile
 		connectDB("test").First(&user)
 		fmt.Println(user.Name)
@@ -26,10 +26,15 @@ func main() {
 		fmt.Println("\nRunning DB Tests...")
 		results[0] = testUserAdd(connectDB("test"))
 		results[1] = testUserSearch(connectDB("test"))
-		//results[2] = testUserPost()
+
+		host := "localhost:3000"
+		go http.ListenAndServe(host, httpHandler())
+
+		results[2] = testUserPost()
 		for i, v := range results {
 		fmt.Printf("Test %d %t\n", i, v)
 		}
+		return
 	}
 
 	host := "localhost:3000"
