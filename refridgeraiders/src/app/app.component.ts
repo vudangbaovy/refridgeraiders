@@ -13,5 +13,5 @@ export class AppComponent {
   }
   clickButton(path: string) {
     this.router.navigate([path]);
-  } 
+  }
 }
