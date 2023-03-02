@@ -9,9 +9,15 @@ import { User } from './user';
 })
 
 export class DataService {
+  private registerUrl = 'http://localhost:3000/User/Register'
   private loginUrl = 'http://localhost:3000/User';
 
   constructor(private http: HttpClient) { }
+
+  registerUser(user: User) {
+    return this.http.post<any>(this.registerUrl, user)
+  }
+
   loginUser(user: User) {
     return this.http.post<any>(this.loginUrl, user)
   }

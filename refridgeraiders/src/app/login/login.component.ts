@@ -10,8 +10,7 @@ export class LoginComponent implements OnInit {
   loginUserData = {
     name: "",
     password: "",
-    adminlevel: 0,
-    allergies: " "
+    allergies: ""
   }
   constructor(private dataService: DataService) { }
   ngOnInit() {
