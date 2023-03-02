@@ -7,6 +7,7 @@ use command "go run ." to run with main.go
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"gorm.io/driver/sqlite"
@@ -108,7 +109,7 @@ func addUser(addUser *UserProfile, db *gorm.DB) (bool, *UserProfile) {
 	err := db.Limit(1).Find("Name = ?", addUser.Name).First(&searchUser)
 
 	if err.Error != nil {
-		db.Create(&addUser)
+		fmt.Println("Added User: ", addUser.Name, " : ", connectDB("test").Create(&addUser).RowsAffected, "Row Affected")
 		return true, addUser
 	}
 	return false, &searchUser

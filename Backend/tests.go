@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 	"encoding/json"
+	"io/ioutil"
 	"gorm.io/gorm"
 )
 
@@ -24,7 +25,7 @@ func testUserAdd(db *gorm.DB)(bool) {
 	}
 
 	for  i := uint(0); i < numberOfEntries; i++ { //starts at last id so no duplicates in db accidently get deleted
-		insertedUsers[i].Name = "userName" + strconv.FormatUint(uint64(i + topID + 1), 10)//creates userprofiles and adds them to db
+		insertedUsers[i].Name = "UATest" + strconv.FormatUint(uint64(i + topID + 1), 10)//creates userprofiles and adds them to db
 		insertedUsers[i].Password = "password" + strconv.FormatUint(uint64(i + topID + 1), 10)
 		insertedUsers[i].Allergies = "Allergies" + strconv.FormatUint(uint64(i + topID + 1), 10)
 		addUser(&insertedUsers[i], db)
@@ -64,13 +65,13 @@ func testUserSearch(db *gorm.DB)(bool) {
 
 
 	var insertedUsers UserProfile
-	insertedUsers.Name = "userName" + strconv.FormatUint(uint64(1 + topID), 10)//creates userprofiles and adds them to db
+	insertedUsers.Name = "USTest" + strconv.FormatUint(uint64(1 + topID), 10)//creates userprofiles and adds them to db
 	insertedUsers.Password = "password" + strconv.FormatUint(uint64(1 + topID), 10)
 	insertedUsers.Allergies = "Allergies" + strconv.FormatUint(uint64(1 + topID), 10)
 	addUser(&insertedUsers, db)
 
 	var searchUser UserProfile
-	err2 := db.Where("Name = ? AND id = ?", "userName" + strconv.FormatUint(uint64(1 + topID), 10), 1 + topID).First(&searchUser)
+	err2 := db.Where("Name = ? AND id = ?", "USTest" + strconv.FormatUint(uint64(1 + topID), 10), 1 + topID).First(&searchUser)
 	//finds added user
 
 	//tests that it has the same values
@@ -86,30 +87,38 @@ func testUserSearch(db *gorm.DB)(bool) {
 func testUserGet()(bool) {
 
 	time.Sleep(100 * time.Millisecond)
-	jsonBody := []byte(`"name": {"Nick"},"password": {"Pwe2"}, "allergies": {""}`)
-	bodyReader := bytes.NewReader(jsonBody)
+	postBody, _ := json.Marshal(map[string]string{
+		"name": "Nick",
+		"password": "Pwe2",
+		"allergies": "Peanuts",
+	}) 
 
-	req, err := http.NewRequest(http.MethodPost, "http://localhost:3000/Users", bodyReader)
+	responseBody  := bytes.NewBuffer(postBody)
+
+	res, err := http.Post("http://localhost:3000/Users/Register", "application/json", responseBody)
 	if err != nil {
-		fmt.Printf("client: could not create request: %s\n", err)
+		fmt.Printf("Request Error: %s\n", err)
 		return false
 	}
 
-	req.Header.Set("Content-Type", "application/json")
+	defer res.Body.Close()
 
-	client := http.Client {
-		Timeout: 30 * time.Second,
-	}
-
-	res, err := client.Do(req)
+	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		fmt.Printf("client: error making http request: %s\n", err)
-		return false
-	}
+		fmt.Printf("Read Error: %s\n", err)
+	 }
+	fmt.Println(string(body))
 
 	var testJson UserProfileJson
-	json.NewDecoder(res.Body).Decode(&testJson)
-	fmt.Println("Server Response{ Name: ", testJson.Name, " Password: ", testJson.Password, " Allergies: ", testJson.Allergies)
+	if testJson.Name != "Nick" || testJson.Password != "Pwe2" || testJson.Allergies != "" {
+		return false
+	}
+
+	var testUser UserProfile
+	connectDB("test").Where("Name = ? AND Password = ?", "Nick", "Pwe2").First(&testUser)
+	if testUser.Name != "Nick" || testUser.Password != "Pwe2" || testUser.Allergies != "" {
+		return false
+	}
 	return true
 }
 

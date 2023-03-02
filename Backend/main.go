@@ -17,7 +17,10 @@ func main() {
 	fmt.Println("\nRunning DB Tests...")
 	results[0] = testUserAdd(connectDB("test"))
 	results[1] = testUserSearch(connectDB("test"))
-	
+	results[2] = testUserGet()
+	for i, v := range results {
+		fmt.Printf("Test %d %t\n", i, v)
+	}
 	
 	if (false) {
 		var user UserProfile
@@ -27,10 +30,7 @@ func main() {
 	}
 
 	host := "localhost:3000"
-	go http.ListenAndServe(host, httpHandler())
+	http.ListenAndServe(host, httpHandler())
 
-	results[2] = testUserGet()
-	for i, v := range results {
-		fmt.Printf("Test %d %t\n", i, v)
-	}
+	
 }
