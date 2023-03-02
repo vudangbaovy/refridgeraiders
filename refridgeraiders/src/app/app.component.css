@@ -23,8 +23,13 @@
     cursor: pointer;
 }
 
-.right-link {
+.right-link:first-of-type {
     margin-left: auto;
+    margin-right: 32px;
+}
+
+.right-link {
+    margin-right: 32px;
     color: white;
     text-decoration: none;
     font-size: 14pt;

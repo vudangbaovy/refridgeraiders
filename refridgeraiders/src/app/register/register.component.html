@@ -1,0 +1,20 @@
+<div fxLayoutAlign="center center" fxFlexFill class="main-div">
+    <mat-card fxFlex="30">
+        <mat-toolbar fxLayoutAlign="center center">Sign up for a KitchenRescue account</mat-toolbar>
+        <form fxLayoutAlign="stretch" fxLayout="column" class="login-form">
+            <mat-form-field>
+              <mat-label>Username</mat-label>
+              <input [(ngModel)]="registerUserData.name" name="username" type="text" matInput placeholder="Username">
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Password</mat-label>
+                <input [(ngModel)]="registerUserData.password" name="password" matInput type="password" placeholder="Password">
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Allergies</mat-label>
+                <input [(ngModel)]="registerUserData.allergies" name="allergies" matInput placeholder="Allergies">
+              </mat-form-field>
+            <button (click)="registerUser()" mat-raised-button type="submit">Submit</button>
+          </form>
+        </mat-card>
+</div>
