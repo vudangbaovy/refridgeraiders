@@ -16,37 +16,31 @@ func testUserAdd(db *gorm.DB)(bool) {
 	numberOfEntries := uint(3)
 	insertedUsers := make([]UserProfile, numberOfEntries)
 
-	topID := uint(0)
-	err := db.Limit(1).Find("id = ?", 0)
-	if err.Error == nil {
-		var tempUser UserProfile
-		db.Last(&tempUser)
-		topID = tempUser.ID + 1
-	}
-
 	for  i := uint(0); i < numberOfEntries; i++ { //starts at last id so no duplicates in db accidently get deleted
-		insertedUsers[i].Name = "UATest" + strconv.FormatUint(uint64(i + topID), 10)//creates userprofiles and adds them to db
-		insertedUsers[i].Password = "password" + strconv.FormatUint(uint64(i + topID), 10)
-		insertedUsers[i].Allergies = "Allergies" + strconv.FormatUint(uint64(i + topID), 10)
+		insertedUsers[i].Name = "UATest" + strconv.FormatUint(uint64(i), 10)//creates userprofiles and adds them to db
+		insertedUsers[i].Password = "password" + strconv.FormatUint(uint64(i), 10)
+		insertedUsers[i].Allergies = "Allergies" + strconv.FormatUint(uint64(i), 10)
 		addUser(&insertedUsers[i], db)
 	}
 
 	for i := uint(0); i < numberOfEntries; i++ {
 		var searchUser UserProfile
-		err := db.Where("id = ?", (i + topID)).First(&searchUser)
+		err := db.Where("name = ?", "UATest" + strconv.FormatUint(uint64(i), 10)).First(&searchUser)
 		//finds added users 
 
 		//tests that they have the same values
 		if searchUser.Name != insertedUsers[i].Name || searchUser.Password != insertedUsers[i].Password || searchUser.Allergies != insertedUsers[i].Allergies || err.Error != nil {
 			for _, v := range insertedUsers {
-				db.Unscoped().Delete(&v)//deletes added users from db
+				result := db.Unscoped().Delete(&v)//deletes added users from db
+				fmt.Println("User Deleted: ", v.Name, " : Rows Affected : ", result.RowsAffected)
 			}
 			return false//failed
 		}
 	}
 
 	for _, v := range insertedUsers {
-		db.Unscoped().Delete(&v)
+		result := db.Unscoped().Delete(&v)
+		fmt.Println("User Deleted: ", v.Name, " : Rows Affected : ", result.RowsAffected)
 	}
 	return true//passed
 }
@@ -54,33 +48,25 @@ func testUserAdd(db *gorm.DB)(bool) {
 func testUserSearch(db *gorm.DB)(bool) {
 	//testing searching users
 
-	
-	topID := uint(0)
-	err := db.Limit(1).Find("id = ?", 0)
-	if err.Error == nil {
-		var tempUser UserProfile
-		db.Last(&tempUser)
-		topID = tempUser.ID + 1
-	}
-
-
-	var insertedUsers UserProfile
-	insertedUsers.Name = "USTest" + strconv.FormatUint(uint64(1 + topID), 10)//creates userprofiles and adds them to db
-	insertedUsers.Password = "password" + strconv.FormatUint(uint64(1 + topID), 10)
-	insertedUsers.Allergies = "Allergies" + strconv.FormatUint(uint64(1 + topID), 10)
-	addUser(&insertedUsers, db)
+	var insertedUser UserProfile
+	insertedUser.Name = "USTest1"//creates userprofiles and adds them to db
+	insertedUser.Password = "password1"
+	insertedUser.Allergies = "Allergies1"
+	addUser(&insertedUser, db)
 
 	var searchUser UserProfile
-	err2 := db.Where("Name = ? AND id = ?", "USTest" + strconv.FormatUint(uint64(1 + topID), 10), 1 + topID).First(&searchUser)
+	err2 := db.Where("Name = ?", "USTest1").First(&searchUser)
 	//finds added user
 
 	//tests that it has the same values
 	if   err2.Error != nil{
-		db.Unscoped().Delete(&insertedUsers)//deletes added users from db
+		result := db.Unscoped().Delete(&insertedUser)//deletes added users from db
+		fmt.Println("User Deleted: ", insertedUser.Name, " : Rows Affected : ", result.RowsAffected)
 		return false//failed
 	}
 
-	db.Unscoped().Delete(&insertedUsers)
+	result := db.Unscoped().Delete(&insertedUser)
+	fmt.Println("User Deleted: ", insertedUser.Name, " : Rows Affected : ", result.RowsAffected)
 	return true//passed
 }
 

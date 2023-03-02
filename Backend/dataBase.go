@@ -34,10 +34,8 @@ func connectDB(dbName string) *gorm.DB {
 	db, err := gorm.Open(sqlite.Open(dbName), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
-	} else {
-		buildTables(db)
-	return db
 	}
+	return db
 }
 
 // function wraps all of the auto migration calls: for future use
@@ -110,7 +108,8 @@ func addUser(addUser *UserProfile, db *gorm.DB) (bool, *UserProfile) {
 	err := db.Limit(1).Find("Name = ?", addUser.Name).First(&searchUser)
 
 	if err.Error != nil {
-		fmt.Println("Added User: ", addUser.Name, " : ", connectDB("test").Create(&addUser).RowsAffected, "Row Affected")
+		result := db.Create(&addUser)
+		fmt.Println("User Added  : ", addUser.Name, " : Rows effected : ", result.RowsAffected)
 		return true, addUser
 	}
 	return false, &searchUser
@@ -119,9 +118,12 @@ func addUser(addUser *UserProfile, db *gorm.DB) (bool, *UserProfile) {
 func loginUser(inputUserName string, inputPassword string, db *gorm.DB) (bool, *UserProfile) {
 	//function tests inputted username and password against database, returns true and user's profile struct if successful
 	//returns false and empty struct if unsuccessful
-	user := UserProfile{}
-	err := db.Limit(1).Find("Name = ?", inputUserName).First(&user)
-	if err.Error == nil || user.Password != inputPassword {
+	var user UserProfile
+
+	fmt.Println("User Login  : Username:", inputUserName, " Password:", inputPassword)
+	err := db.Where("Name = ?", inputUserName).First(&user)
+	if err.Error != nil || user.Password != inputPassword {
+		fmt.Println("Login Attempt Failed")
 		return false, &UserProfile{}
 	}
 	return true, &user
