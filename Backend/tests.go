@@ -21,19 +21,19 @@ func testUserAdd(db *gorm.DB)(bool) {
 	if err.Error == nil {
 		var tempUser UserProfile
 		db.Last(&tempUser)
-		topID = tempUser.ID
+		topID = tempUser.ID + 1
 	}
 
 	for  i := uint(0); i < numberOfEntries; i++ { //starts at last id so no duplicates in db accidently get deleted
-		insertedUsers[i].Name = "UATest" + strconv.FormatUint(uint64(i + topID + 1), 10)//creates userprofiles and adds them to db
-		insertedUsers[i].Password = "password" + strconv.FormatUint(uint64(i + topID + 1), 10)
-		insertedUsers[i].Allergies = "Allergies" + strconv.FormatUint(uint64(i + topID + 1), 10)
+		insertedUsers[i].Name = "UATest" + strconv.FormatUint(uint64(i + topID), 10)//creates userprofiles and adds them to db
+		insertedUsers[i].Password = "password" + strconv.FormatUint(uint64(i + topID), 10)
+		insertedUsers[i].Allergies = "Allergies" + strconv.FormatUint(uint64(i + topID), 10)
 		addUser(&insertedUsers[i], db)
 	}
 
 	for i := uint(0); i < numberOfEntries; i++ {
 		var searchUser UserProfile
-		err := db.Where("id = ?", (i + topID + 1)).First(&searchUser)
+		err := db.Where("id = ?", (i + topID)).First(&searchUser)
 		//finds added users 
 
 		//tests that they have the same values
@@ -60,7 +60,7 @@ func testUserSearch(db *gorm.DB)(bool) {
 	if err.Error == nil {
 		var tempUser UserProfile
 		db.Last(&tempUser)
-		topID = tempUser.ID
+		topID = tempUser.ID + 1
 	}
 
 
@@ -84,18 +84,18 @@ func testUserSearch(db *gorm.DB)(bool) {
 	return true//passed
 }
 
-func testUserGet()(bool) {
+func testUserPost()(bool) {
 
 	time.Sleep(100 * time.Millisecond)
 	postBody, _ := json.Marshal(map[string]string{
 		"name": "Nick",
 		"password": "Pwe2",
-		"allergies": "Peanuts",
+		"allergies": "",
 	}) 
 
 	responseBody  := bytes.NewBuffer(postBody)
 
-	res, err := http.Post("http://localhost:3000/Users/Register", "application/json", responseBody)
+	res, err := http.Post("http://localhost:3000/Users", "application/json", responseBody)
 	if err != nil {
 		fmt.Printf("Request Error: %s\n", err)
 		return false
