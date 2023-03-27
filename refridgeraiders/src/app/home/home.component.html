@@ -1,7 +1,13 @@
-<div fxLayoutAlign="center" class="title"><h1>KitchenRescue</h1></div>
+<div fxLayoutAlign="center" class="title">KitchenRescue</div>
 <p class="line-1 anim-typewriter">Delicious meals from all corners of your fridge</p>
-  <div fxLayoutAlign="center center"><mat-form-field appearance="outline">
-    <mat-label>Search for recipes</mat-label>
-    <input matInput type="text"/>
+  <!-- <div fxLayoutAlign="center center"><mat-form-field appearance="fill">
+    <input matInput type="text" placeholder="Start typing your ingredients"/>
     <mat-icon matPrefix>search</mat-icon>
-  </mat-form-field></div>
+  </mat-form-field></div> -->
+
+<div class="container">
+  <form action="" class="search-bar">
+    <input type="text" placeholder="Start typing your ingredients" name="search">
+    <button type="submit"><img src="../assets/search.png"></button>
+  </form>
+</div>
