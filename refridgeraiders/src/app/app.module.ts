@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatFormFieldModule, MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { DataService } from './data.service';
@@ -48,7 +48,8 @@ import { NavbarComponent } from './navbar/navbar.component';
   ],
   exports: [RouterModule],
   providers: [
-    DataService
+    DataService,
+    {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'outline'}},
   ],
   bootstrap: [AppComponent]
 })
