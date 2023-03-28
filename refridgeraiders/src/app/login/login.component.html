@@ -1,17 +1,13 @@
-<div fxLayoutAlign="center center" fxFlexFill class="main-div">
-    <mat-card fxFlex="30">
-        <mat-toolbar fxLayoutAlign="center center">Log in to your account</mat-toolbar>
-        <form fxLayoutAlign="stretch" fxLayout="column" class="login-form">
+<div class="container" fxLayoutAlign="center center" fxLayout="column">
+        <h1>Log In</h1>
+        <form fxLayout="column" class="login-form">
             <mat-form-field>
-              <mat-label>Username</mat-label>
               <input [(ngModel)]="loginUserData.name" name="username" type="text" matInput placeholder="Username">
             </mat-form-field>
             <mat-form-field>
-                <mat-label>Password</mat-label>
                 <input [(ngModel)]="loginUserData.password" name="password" matInput type="password" placeholder="Password">
               </mat-form-field>
-              <button (click)="loginUser()" mat-raised-button type="submit">Log In</button>
+              <button (click)="loginUser()" type="submit">Log In</button>
           </form>
-          <p class="hyperlink">First time at KitchenRescue?</p>
-        </mat-card>
+          <p class="hyperlink" (click)="redirect()">First time at KitchenRescue?</p>
 </div>

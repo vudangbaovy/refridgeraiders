@@ -1,0 +1,14 @@
+<div class="navbar">
+    <div><img
+      width="45"
+      alt="KitchenRescue Logo"
+      src="https://cdn.iconscout.com/icon/premium/png-512-thumb/fridge-2589829-2160501.png?f=avif&w=512"
+    />
+    </div>
+    <h3 class="link" (click)="clickButton('')">Home</h3>
+    <p class="right-link" (click)="clickButton('/login')">Login</p>
+    <p class="right-link" (click)="clickButton('/register')">Register</p>
+  </div>
+  <div class="container">
+    <router-outlet></router-outlet>
+</div>

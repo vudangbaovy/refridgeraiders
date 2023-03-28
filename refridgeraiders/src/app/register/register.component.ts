@@ -16,7 +16,6 @@ export class RegisterComponent implements OnInit {
   ngOnInit() {
   }
   registerUser() {
-    console.log(this.registerUserData);
     this.dataService.registerUser(this.registerUserData)
       .subscribe(
         res => console.log(res),

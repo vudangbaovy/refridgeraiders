@@ -13,15 +13,22 @@ export class LoginComponent implements OnInit {
     password: "",
     allergies: ""
   }
-  constructor(private dataService: DataService) { }
+  constructor(
+    private dataService: DataService,
+    private router: Router) 
+    { }
+
   ngOnInit() {
   }
+
   loginUser() {
-    console.log(this.loginUserData);
     this.dataService.loginUser(this.loginUserData)
       .subscribe(
         res => console.log(res),
         err => console.log(err)
       )
+  }
+  redirect() {
+    this.router.navigate(['/register']);
   }
 }

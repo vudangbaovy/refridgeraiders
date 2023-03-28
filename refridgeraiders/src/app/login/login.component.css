@@ -1,11 +1,10 @@
-.main-div mat-card {
-    padding: 10px;
-}
-
-.main-div mat-toolbar {
-    background-color: #5e9b81;
-    color: white;
-    text-align: center;
+.container {
+    width: 350px;
+    height: 360px;
+    margin: 0 auto;
+    border-radius: 12px;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    background-color: white;
 }
 
 .login-form {
@@ -19,6 +18,17 @@
     text-align: center;
 }
 
-button mat-raised-button {
-    color: #5e9b81;
+button {
+    color: white;
+    background-color: #5e9b81;
+    border: 0;
+    border-radius: 5px;
+    padding: 10px;
+    width: 150px;
+    align-self: center;
+    cursor: pointer;
+}
+
+h1 {
+    color: darkgreen;
 }
