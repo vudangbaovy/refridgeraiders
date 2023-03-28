@@ -16,11 +16,11 @@ func main() {
 	db := connectDB("test")
 	buildTables(db)
 	
-	if (true) {
+	if (false) {
 		var user UserProfile
 		connectDB("test").First(&user)
-		fmt.Println(user.Name)
-		fmt.Println(user.Password)
+		fmt.Println("Test Username: ",user.Name)
+		fmt.Println("Test Password: ",user.Password)
 
 		var results [3]bool
 		fmt.Println("\nRunning DB Tests...")
