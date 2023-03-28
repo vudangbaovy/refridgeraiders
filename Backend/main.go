@@ -16,7 +16,7 @@ func main() {
 	db := connectDB("test")
 	buildTables(db)
 	
-	if (false) {
+	if (true) {
 		var user UserProfile
 		connectDB("test").First(&user)
 		fmt.Println("Test Username: ",user.Name)

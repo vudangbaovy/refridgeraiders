@@ -75,6 +75,7 @@ func testUserSearch(db *gorm.DB)(bool) {
 //test 3
 func testUserPost()(bool) {
 
+
 	fmt.Println("\nTest 3 -------------------------------------")
 	time.Sleep(100 * time.Millisecond)
 	postBody, _ := json.Marshal(map[string]string{
@@ -97,7 +98,7 @@ func testUserPost()(bool) {
 	if err != nil {
 		fmt.Printf("Read Error: %s\n", err)
 	}
-	if string(body) == "{\"name\":\"Nick\",\"password\":\"Pwe2\",\"allergies\":\"Peanuts\"}\n"{
+	if string(body) == "{\"name\":\"Nick\",\"password\":\"Pwe2\",\"allergies\":\"Pie\"}\n"{
 		return true
 	}
 	return false
