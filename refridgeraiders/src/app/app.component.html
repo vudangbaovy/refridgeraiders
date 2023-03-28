@@ -1,11 +1,10 @@
 <div class="navbar" *ngIf="!isLoggedIn">
-  <div><img
-    width="45"
+  <div class="link logo" (click)="clickButton('')"><img
+    width="200"
     alt="KitchenRescue Logo"
-    src="https://cdn.iconscout.com/icon/premium/png-512-thumb/fridge-2589829-2160501.png?f=avif&w=512"
+    src="./assets/logo-white.png"
   />
-  </div>
-  <h3 class="link" (click)="clickButton('')">Home</h3>
+</div>
   <p class="right-link" (click)="clickButton('/login')">Login</p>
   <p class="right-link" (click)="clickButton('/register')">Register</p>
 </div>
@@ -13,11 +12,10 @@
   <div><img
     width="45"
     alt="KitchenRescue Logo"
-    src="https://cdn.iconscout.com/icon/premium/png-512-thumb/fridge-2589829-2160501.png?f=avif&w=512"
+    src="./assets/logo-white.png"
   />
   </div>
-  <h3 class="link" (click)="clickButton('')">Home</h3>
-  <p class="right-link">Logged in</p>
+  <p class="right-link">Log Out</p>
 </div>
 <div class="container">
   <router-outlet></router-outlet>

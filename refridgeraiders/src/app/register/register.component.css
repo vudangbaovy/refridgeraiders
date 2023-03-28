@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
+
 .main-div mat-card {
     padding: 10px;
     border-radius: 10px;
@@ -8,7 +10,7 @@
     height: 460px;
     margin: 0 auto;
     border-radius: 12px;
-    font-family: Roboto, "Helvetica Neue", sans-serif;
+    font-family: Poppins, sans-serif;
     background-color: white;
 }
 
@@ -34,6 +36,7 @@ button {
     padding: 10px;
     width: 150px;
     align-self: center;
+    font-family: Poppins, sans-serif;
 }
 
 h1 {

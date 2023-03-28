@@ -1,6 +1,6 @@
 .container {
     margin: 48px;
-    font-family: Roboto, "Helvetica Neue", sans-serif;
+    font-family: 'Poppins', sans-serif;
 }
 
 .navbar {
@@ -8,7 +8,7 @@
     padding: 10px 30px;
     display: flex;
     align-items: center;
-    font-family: sans-serif;
+    font-family: 'Poppins', sans-serif;
 }
 
 .link:first-of-type {
@@ -21,6 +21,10 @@
     text-decoration: none;
     font-size: 14pt;
     cursor: pointer;
+}
+
+.logo {
+    height: 10px;
 }
 
 .right-link:first-of-type {

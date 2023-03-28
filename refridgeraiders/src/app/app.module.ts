@@ -20,7 +20,6 @@ import { MatButtonModule} from '@angular/material/button';
 import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register/register.component';
-import { NavbarComponent } from './navbar/navbar.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +27,6 @@ import { NavbarComponent } from './navbar/navbar.component';
     LoginComponent,
     HomeComponent,
     RegisterComponent,
-    NavbarComponent,
   ],
   imports: [
     BrowserModule,

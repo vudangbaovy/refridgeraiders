@@ -1,7 +1,7 @@
 /* Google Fonts */
-@import url(https://fonts.googleapis.com/css?family=Anonymous+Pro);
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
 
-/* Global */
+/* Global */ˆ
 .title {
   font-size: 3em;
   font-weight: 600;
@@ -12,15 +12,20 @@
 }
 .container {
   width: 100%;
-  min-height: 0vh;
+  height: 550px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.4),rgba(0, 0, 0, 0.4)), url(/assets/kitchen-bg.jpg);
+  border-radius: 60px;
+  background-size: contain;
+  box-shadow: #c2c2c2;
 }
 .search-bar {
   width: 100%;
   max-width: 600px;
-  background-color: rgba(255,255,255,0.2);
+  height: 50px;
+  background-color: rgba(255,255,255);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -35,20 +40,21 @@
   outline: none;
   padding: 24px 20px;
   font-size: 20px;
-  color: #ffffff;
+  color: #000000;
+  font-family: 'Poppins', sans-serif;
 }
 ::placeholder {
-  color: rgb(239, 233, 233);
+  color: rgb(119, 119, 119);
 }
 
 .search-bar button img {
-  width: 25px;
+  width: 20px;
 }
 .search-bar button {
   border: 0;
   border-radius: 50%;
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   background: #c2c2c2;
   cursor: pointer;
 }
@@ -58,23 +64,23 @@ html{
   overflow: hidden;
 }
 body{
-  height: calc(100vh - 8em);
   padding: 4em;
   color: rgba(255,255,255,.75);
   background-color: rgb(255, 255, 255);
 }
+
 .line-1{
-    position: relative;
     top: 100%;
-    width: 24em;
+    width: 25em;
     margin: 0 auto;
-    border-right: 2px solid rgba(255,255,255,.75);
-    font-size: 120%;
+    border-right: 4px solid rgba(255,255,255,.75);
+    font-size: 200%;
     text-align: center;
     white-space: nowrap;
     overflow: hidden;
     transform: translateY(-50%);  
-    color:rgb(255, 255, 255);  
+    color:rgb(255, 255, 255);
+    font-family: 'Poppins', sans-serif;
 }
 
 /* Animation */
@@ -84,7 +90,7 @@ body{
 }
 @keyframes typewriter{
   from{width: 0;}
-  to{width: 20.5em;}
+  to{width: 23.1em;}
 }
 @keyframes blinkTextCursor{
   from{border-right-color: rgba(255, 255, 255, 1);}

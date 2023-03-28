@@ -5,7 +5,15 @@
               <input [(ngModel)]="loginUserData.name" name="username" type="text" matInput placeholder="Username">
             </mat-form-field>
             <mat-form-field>
-                <input [(ngModel)]="loginUserData.password" name="password" matInput type="password" placeholder="Password">
+                <input [(ngModel)]="loginUserData.password" 
+                name="password" 
+                matInput type="password" 
+                placeholder="Password"
+                class="form-control"
+                formControlName="password"
+                [ngClass]="{'is-invalid': submitted && f.password.errors}"
+                id="inputPassword4">
+                <div *ngIf="submitted && f.password.errors" class="invalid-feedback"></div>
               </mat-form-field>
               <button (click)="loginUser()" type="submit">Log In</button>
           </form>

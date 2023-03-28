@@ -1,9 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
+
 .container {
     width: 350px;
-    height: 360px;
+    height: 375px;
     margin: 0 auto;
     border-radius: 12px;
-    font-family: Roboto, "Helvetica Neue", sans-serif;
+    font-family: Poppins, sans-serif;
     background-color: white;
 }
 
@@ -16,6 +18,7 @@
     text-decoration: underline;
     cursor: pointer;
     text-align: center;
+    font-family: Poppins, sans-serif;
 }
 
 button {
@@ -27,6 +30,7 @@ button {
     width: 150px;
     align-self: center;
     cursor: pointer;
+    font-family: Poppins, sans-serif;
 }
 
 h1 {
