@@ -19,8 +19,8 @@ func main() {
 	if (false) {
 		var user UserProfile
 		connectDB("test").First(&user)
-		fmt.Println(user.Name)
-		fmt.Println(user.Password)
+		fmt.Println("Test Username: ",user.Name)
+		fmt.Println("Test Password: ",user.Password)
 
 		var results [3]bool
 		fmt.Println("\nRunning DB Tests...")
@@ -31,6 +31,7 @@ func main() {
 		go http.ListenAndServe(host, httpHandler())
 
 		results[2] = testUserPost()
+		fmt.Println("\nTest Results: ")
 		for i, v := range results {
 		fmt.Printf("Test %d %t\n", i, v)
 		}
