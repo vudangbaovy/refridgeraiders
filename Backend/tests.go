@@ -10,12 +10,13 @@ import (
 	"io/ioutil"
 	"gorm.io/gorm"
 )
-
+//test 1
 func testUserAdd(db *gorm.DB)(bool) {
 	//adding users test code
 	numberOfEntries := uint(3)
 	insertedUsers := make([]UserProfile, numberOfEntries)
 
+	fmt.Println("\nTest 1 -------------------------------------")
 	for  i := uint(0); i < numberOfEntries; i++ { //starts at last id so no duplicates in db accidently get deleted
 		insertedUsers[i].Name = "UATest" + strconv.FormatUint(uint64(i), 10)//creates userprofiles and adds them to db
 		insertedUsers[i].Password = "password" + strconv.FormatUint(uint64(i), 10)
@@ -44,10 +45,11 @@ func testUserAdd(db *gorm.DB)(bool) {
 	}
 	return true//passed
 }
-
+//test 2
 func testUserSearch(db *gorm.DB)(bool) {
 	//testing searching users
 
+	fmt.Println("\nTest 2 -------------------------------------")
 	var insertedUser UserProfile
 	insertedUser.Name = "USTest1"//creates userprofiles and adds them to db
 	insertedUser.Password = "password1"
@@ -70,8 +72,10 @@ func testUserSearch(db *gorm.DB)(bool) {
 	return true//passed
 }
 
+//test 3
 func testUserPost()(bool) {
 
+	fmt.Println("\nTest 3 -------------------------------------")
 	time.Sleep(100 * time.Millisecond)
 	postBody, _ := json.Marshal(map[string]string{
 		"name": "Nick",
@@ -98,6 +102,9 @@ func testUserPost()(bool) {
 	}
 	return false
 }
+
+
+
 
 func testLoginUser(db *gorm.DB) {
 	//allows for command line tests of login function

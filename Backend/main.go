@@ -31,6 +31,7 @@ func main() {
 		go http.ListenAndServe(host, httpHandler())
 
 		results[2] = testUserPost()
+		fmt.Println("\nTest Results: ")
 		for i, v := range results {
 		fmt.Printf("Test %d %t\n", i, v)
 		}
