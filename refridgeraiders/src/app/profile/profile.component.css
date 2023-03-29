@@ -9,3 +9,19 @@
     margin-left: 16px;
     margin-top: 0px;
 }
+
+.container {
+    margin-left: 80px;
+    margin-top: 0px;
+    font-family: 'Poppins', sans-serif;
+}
+
+h1 {
+    font-size: 45px;
+    color: #ffffff;
+    margin-bottom: 0px;
+}
+
+p {
+    color: #ffffff;
+}
