@@ -1,9 +1,8 @@
 package main
 
 import (
-	"log"
-
 	"fmt"
+	"log"
 	"testing"
 
 	"golang.org/x/crypto/bcrypt"
@@ -12,6 +11,7 @@ import (
 func getPass() {
 	// get password from user
 	// hashed password will be stored in the database
+
 }
 
 func hashedPass(password string) (string, error) {
