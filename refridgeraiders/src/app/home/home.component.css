@@ -83,6 +83,21 @@ body{
     font-family: 'Poppins', sans-serif;
 }
 
+.line-2{
+  position: relative;
+  top: 100%;
+  width: 24em;
+  margin: 0 auto;
+  border-right: 2px solid rgba(255,255,255,.75);
+  font-size: 120%;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  transform: translateY(-50%);  
+  color:rgb(255, 255, 255);
+  margin-top: 20px;  
+}
+
 /* Animation */
 .anim-typewriter{
   animation: typewriter 4s steps(44) 1s 1 normal both,
@@ -91,6 +106,14 @@ body{
 @keyframes typewriter{
   from{width: 0;}
   to{width: 23.1em;}
+}
+.anim-typewriter2{
+  animation: typewriter2 3s steps(36) 1s 1 normal both,
+             blinkTextCursor 350ms steps(36) infinite normal;
+}
+@keyframes typewriter2{
+  from{width: 0;}
+  to{width: 17em;}
 }
 @keyframes blinkTextCursor{
   from{border-right-color: rgba(255, 255, 255, 1);}
