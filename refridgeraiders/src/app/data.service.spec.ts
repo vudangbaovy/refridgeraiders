@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-
 import { DataService } from './data.service';
 
 describe('DataService', () => {
@@ -11,6 +10,6 @@ describe('DataService', () => {
   });
 
   it('should be created', () => {
-    expect(service).toBeTruthy();
+    expect(service).to.equal(true);
   });
 });

@@ -12,7 +12,7 @@ import { MatFormFieldModule, MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/mat
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { DataService } from './data.service';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './login/login.component';
 import { RouterModule, Routes } from '@angular/router';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -22,7 +22,6 @@ import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register/register.component';
 import { ProfileComponent } from './profile/profile.component';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
-
 
 @NgModule({
   declarations: [
@@ -47,13 +46,14 @@ import { Ng2SearchPipeModule } from 'ng2-search-filter';
     FlexLayoutModule,
     MatButtonModule,
     AppRoutingModule,
-    Ng2SearchPipeModule,
-    
+    Ng2SearchPipeModule
   ],
   exports: [RouterModule],
   providers: [
     DataService,
     {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'outline'}},
+    HttpClientModule,
+    HttpClient
   ],
   bootstrap: [AppComponent]
 })

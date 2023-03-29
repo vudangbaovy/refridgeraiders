@@ -18,6 +18,6 @@ describe('ProfileComponent', () => {
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(component).to.equal(true);
   });
 });
