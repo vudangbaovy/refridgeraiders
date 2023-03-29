@@ -122,6 +122,7 @@ will eventually be changed to error messages<h4></p>
   <h3>Note POST Test Api<h3>
 <h4>Similar to the User Login test the Note Post tests both the router and the database by sending a mock json file to try</p>
 to get a user's note from the database and then he test then compares it against the expected returning json<h4></p>
-   <h3>Server Test Api<h3>
+<br>
+ <h3>Server Test Api<h3>
 <h4>This test is relatively simple, all it does is test if the server is can read json files through the router,</p>
 but its run every time the server starts.<h4></p>
