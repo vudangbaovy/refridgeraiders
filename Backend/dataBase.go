@@ -110,7 +110,7 @@ func UserDelete(w http.ResponseWriter, r *http.Request) {
 	valid, user := ValidateUser(deleteJson.Name, deleteJson.Password, db)
 
 	if valid {
-		db.Unscoped().Delete(&user)
+		db.Select("UserNotes").Delete(&UserProfile{}, user.ID)
 		json.NewEncoder(w).Encode(&user)
 	} else {
 		json.NewEncoder(w).Encode(&UserProfile{})
@@ -210,6 +210,32 @@ func NotePut(w http.ResponseWriter, r *http.Request) {
 			if v.RecipeName == noteJson.RecipeName {
 				notes[i].Note = noteJson.Note
 				db.Model(&user).Association("UserNotes").Replace(notes)
+				db.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&user)
+				json.NewEncoder(w).Encode(&noteJson)
+				return
+			}
+		}
+		json.NewEncoder(w).Encode(&UserNoteJson{})
+	} else {
+		json.NewEncoder(w).Encode(&UserNoteJson{})
+	}
+}
+
+func NoteDelete(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var noteJson UserNoteJson
+	json.NewDecoder(r.Body).Decode(&noteJson)
+
+	db := connectDB("test")
+	valid, user := ValidateUser(noteJson.Name, noteJson.Password, db)
+	
+	if valid {
+		var notes []UserNote
+		db.Model(&user).Association("UserNotes").Find(&notes)
+		for i, v := range notes {
+			if v.RecipeName == noteJson.RecipeName {
+				db.Model(&user).Association("UserNotes").Delete(notes[i])
+				db.Delete(&notes[i])
 				db.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&user)
 				json.NewEncoder(w).Encode(&noteJson)
 				return

@@ -24,6 +24,7 @@ func httpHandler() http.Handler {
 	router.HandleFunc("/note/create", CreateNotePost).Methods("POST")
 	router.HandleFunc("/note", NotePost).Methods("POST")
 	router.HandleFunc("/note", NotePut).Methods("PUT")
+	router.HandleFunc("/note", NoteDelete).Methods("DELETE")
 
 	//start up tests
 	router.HandleFunc("/servertest", JsonTest).Methods("POST")
