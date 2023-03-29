@@ -3,6 +3,9 @@ package main
 import (
 	"log"
 
+	"fmt"
+	"testing"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -25,4 +28,30 @@ func compareHash(password string, hash string) bool {
 		return false
 	}
 	return true
+}
+
+// testing
+func correctPassTest(t *testing.T) {
+	// should return true as correct pass is given
+	pass := "Password1"
+	hash, err := hashedPass(pass)
+	if err != nil {
+		t.Fatalf("Generating hashed password failed", err)
+	}
+
+	checking := compareHash(pass, hash)
+	fmt.Println("Passwords Match: ", checking)
+}
+
+func incorrectPassTest(t *testing.T) {
+	// this should return false as an incorrect pass is given
+	pass := "Password1"
+	hash, err := hashedPass(pass)
+	if err != nil {
+		t.Fatalf("Generating hashed password failed", err)
+	}
+
+	pass2 := "Password10"
+	checking := compareHash(pass2, hash)
+	fmt.Println("Passwords Match: ", checking)
 }
