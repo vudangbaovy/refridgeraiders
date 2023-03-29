@@ -169,13 +169,13 @@ func StartUpTest() {
 func JsonTest(w http.ResponseWriter, r *http.Request) {
 
 		w.Header().Set("Content-Type", "application/json")
-		var JsonFrame UserLoginJson
+		var JsonFrame AllergiesJson
 		json.NewDecoder(r.Body).Decode(&JsonFrame)
 	
 		if JsonFrame.User == "Server" && JsonFrame.Password == "Starting" && JsonFrame.Allergies == "Test" {
 			json.NewEncoder(w).Encode(&JsonFrame)
 		} else {
-			json.NewEncoder(w).Encode(&UserLoginJson{})
+			json.NewEncoder(w).Encode(&AllergiesJson{})
 		}
 }
 

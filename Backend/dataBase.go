@@ -19,14 +19,23 @@ type UserProfile struct {
 	gorm.Model
 	UserNotes []UserNote `gorm:"foreignKey:UserRef"`
 	User    	string
+	FirstN		string
+	LastN		string
 	Password   	string
 	Allergies  	string
 }
 //types are seperated into json to send only send specific data
-type UserLoginJson struct {
+type AllergiesJson struct {
 	User    	string `json:"user"`
 	Password   	string `json:"password"`
 	Allergies  	string `json:"allergies"`
+}
+
+type LoginJson struct {
+	User    	string `json:"user"`
+	Password   	string `json:"password"`
+	FirstN  	string `json:"firstN"`
+	LastN  		string `json:"lastN"`
 }
 
 type UserNoteJson struct {
@@ -39,7 +48,7 @@ type UserNoteJson struct {
 type UserNote struct {
 	gorm.Model
 	UserRef		uint
-	User	string
+	User		string
 	RecipeName 	string
 	Note		string
 }
@@ -62,48 +71,80 @@ func buildTables(db *gorm.DB) {
 func UserRegisterPost(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
-	var newUserJson UserLoginJson
+	var newUserJson LoginJson
 	json.NewDecoder(r.Body).Decode(&newUserJson)
-	user := UserProfile{User: newUserJson.User, Password: newUserJson.Password, Allergies: newUserJson.Allergies}
+	user := UserProfile{User: newUserJson.User, Password: newUserJson.Password, 
+		FirstN: newUserJson.FirstN, LastN: newUserJson.LastN, Allergies: ""}
 	addUser(&user, connectDB("test"))
 	json.NewEncoder(w).Encode(newUserJson)
+}
+
+func UserPOST(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var LUS LoginJson
+	json.NewDecoder(r.Body).Decode(&LUS)
+
+	db := connectDB("test")
+	valid, user := ValidateUser(LUS.User,LUS.Password,db)
+	if valid {
+		LUS.FirstN = user.FirstN
+		LUS.LastN = user.LastN
+		json.NewEncoder(w).Encode(&LUS)
+	} else {
+		json.NewEncoder(w).Encode(&LoginJson{})
+	}
+}
+
+func UserPUT(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var LUS LoginJson
+	json.NewDecoder(r.Body).Decode(&LUS)
+
+	db := connectDB("test")
+	valid, user := ValidateUser(LUS.User,LUS.Password,db)
+	if valid {
+		db.Model(&user).Updates(UserProfile{FirstN: LUS.FirstN, LastN: LUS.LastN})
+		json.NewEncoder(w).Encode(&LUS)
+	} else {
+		json.NewEncoder(w).Encode(&LoginJson{})
+	}
 }
 
 func AllergiesPost(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
-	var loginJson UserLoginJson
-	json.NewDecoder(r.Body).Decode(&loginJson)
+	var ARJ AllergiesJson
+	json.NewDecoder(r.Body).Decode(&ARJ)
 
-	valid, user := ValidateUser(loginJson.User, loginJson.Password, connectDB("test"))
+	valid, user := ValidateUser(ARJ.User, ARJ.Password, connectDB("test"))
 	if valid {
-		loginJson = UserLoginJson{User: user.User, Password: user.Password, Allergies: user.Allergies}
-		json.NewEncoder(w).Encode(&loginJson)
+		ARJ = AllergiesJson{User: user.User, Password: user.Password, Allergies: user.Allergies}
+		json.NewEncoder(w).Encode(&ARJ)
 	} else {
-		json.NewEncoder(w).Encode(&UserLoginJson{})
+		json.NewEncoder(w).Encode(&AllergiesJson{})
 	}
 }
 
 func AllergiesPut(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
-	var loginJson UserLoginJson
-	json.NewDecoder(r.Body).Decode(&loginJson)
+	var AEJ AllergiesJson
+	json.NewDecoder(r.Body).Decode(&AEJ)
 
 	db := connectDB("test")
-	valid, user := ValidateUser(loginJson.User, loginJson.Password, db)
+	valid, user := ValidateUser(AEJ.User, AEJ.Password, db)
 	if valid {
-		loginJson = UserLoginJson{User: user.User, Password: user.Password, Allergies: user.Allergies}
-		json.NewEncoder(w).Encode(&loginJson)
+		db.Model(&user).Update("Allergies", AEJ.Allergies)
+		json.NewEncoder(w).Encode(&AEJ)
 	} else {
-		json.NewEncoder(w).Encode(&UserLoginJson{})
+		json.NewEncoder(w).Encode(&AllergiesJson{})
 	}
 }
 
 func UserDelete(w http.ResponseWriter, r *http.Request) {
 	//deletes a user from the db
 	w.Header().Set("Content-Type", "application/json")
-	var deleteJson UserLoginJson
+	var deleteJson AllergiesJson
 	json.NewDecoder(r.Body).Decode(&deleteJson)
 
 	db := connectDB("test")
@@ -113,7 +154,7 @@ func UserDelete(w http.ResponseWriter, r *http.Request) {
 		db.Select("UserNotes").Delete(&UserProfile{}, user.ID)
 		json.NewEncoder(w).Encode(&deleteJson)
 	} else {
-		json.NewEncoder(w).Encode(&UserLoginJson{})
+		json.NewEncoder(w).Encode(&AllergiesJson{})
 	}
 }
 
