@@ -18,19 +18,19 @@ import (
 type UserProfile struct {
 	gorm.Model
 	UserNotes []UserNote `gorm:"foreignKey:UserRef"`
-	Name       	string
+	User    	string
 	Password   	string
 	Allergies  	string
 }
 //types are seperated into json to send only send specific data
 type UserLoginJson struct {
-	Name       	string `json:"name"`
+	User    	string `json:"user"`
 	Password   	string `json:"password"`
 	Allergies  	string `json:"allergies"`
 }
 
 type UserNoteJson struct {
-	Name       	string `json:"name"`
+	User    	string `json:"user"`
 	Password   	string `json:"password"`
 	RecipeName 	string `json:"recipeName"`
 	Note		string `json:"note"`
@@ -39,7 +39,7 @@ type UserNoteJson struct {
 type UserNote struct {
 	gorm.Model
 	UserRef		uint
-	Name		string
+	User	string
 	RecipeName 	string
 	Note		string
 }
@@ -64,7 +64,7 @@ func UserRegisterPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var newUserJson UserLoginJson
 	json.NewDecoder(r.Body).Decode(&newUserJson)
-	user := UserProfile{Name: newUserJson.Name, Password: newUserJson.Password, Allergies: newUserJson.Allergies}
+	user := UserProfile{User: newUserJson.User, Password: newUserJson.Password, Allergies: newUserJson.Allergies}
 	addUser(&user, connectDB("test"))
 	json.NewEncoder(w).Encode(newUserJson)
 }
@@ -75,9 +75,9 @@ func AllergiesPost(w http.ResponseWriter, r *http.Request) {
 	var loginJson UserLoginJson
 	json.NewDecoder(r.Body).Decode(&loginJson)
 
-	valid, user := ValidateUser(loginJson.Name, loginJson.Password, connectDB("test"))
+	valid, user := ValidateUser(loginJson.User, loginJson.Password, connectDB("test"))
 	if valid {
-		loginJson = UserLoginJson{Name: user.Name, Password: user.Password, Allergies: user.Allergies}
+		loginJson = UserLoginJson{User: user.User, Password: user.Password, Allergies: user.Allergies}
 		json.NewEncoder(w).Encode(&loginJson)
 	} else {
 		json.NewEncoder(w).Encode(&UserLoginJson{})
@@ -91,9 +91,9 @@ func AllergiesPut(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&loginJson)
 
 	db := connectDB("test")
-	valid, user := ValidateUser(loginJson.Name, loginJson.Password, db)
+	valid, user := ValidateUser(loginJson.User, loginJson.Password, db)
 	if valid {
-		loginJson = UserLoginJson{Name: user.Name, Password: user.Password, Allergies: user.Allergies}
+		loginJson = UserLoginJson{User: user.User, Password: user.Password, Allergies: user.Allergies}
 		json.NewEncoder(w).Encode(&loginJson)
 	} else {
 		json.NewEncoder(w).Encode(&UserLoginJson{})
@@ -107,24 +107,24 @@ func UserDelete(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&deleteJson)
 
 	db := connectDB("test")
-	valid, user := ValidateUser(deleteJson.Name, deleteJson.Password, db)
+	valid, user := ValidateUser(deleteJson.User, deleteJson.Password, db)
 
 	if valid {
 		db.Select("UserNotes").Delete(&UserProfile{}, user.ID)
-		json.NewEncoder(w).Encode(&user)
+		json.NewEncoder(w).Encode(&deleteJson)
 	} else {
-		json.NewEncoder(w).Encode(&UserProfile{})
+		json.NewEncoder(w).Encode(&UserLoginJson{})
 	}
 }
 
 func addUser(addUser *UserProfile, db *gorm.DB) (bool, *UserProfile) {
 	//adds users and returns bool and user profile type
 	searchUser := UserProfile{}
-	err := db.Limit(1).Find("Name = ?", addUser.Name).First(&searchUser)
+	err := db.Limit(1).Find("User = ?", addUser.User).First(&searchUser)
 
 	if err.Error != nil {
 		result := db.Omit("UserNote").Create(&addUser)
-		fmt.Println("User Added  : ", addUser.Name, " : Rows effected : ", result.RowsAffected)
+		fmt.Println("User Added  : ", addUser.User, " : Rows effected : ", result.RowsAffected)
 		return true, addUser
 	}
 	return false, &UserProfile{}
@@ -136,7 +136,7 @@ func ValidateUser(inputUserName string, inputPassword string, db *gorm.DB) (bool
 	var user UserProfile
 
 	//fmt.Println("User Login  : Username:", inputUserName, " Password:", inputPassword)
-	err := db.Where("Name = ?", inputUserName).First(&user)
+	err := db.Where("User = ?", inputUserName).First(&user)
 	if err.Error != nil || user.Password != inputPassword {
 		fmt.Println("Login Attempt Failed")
 		return false, nil
@@ -151,9 +151,9 @@ func CreateNotePost(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&noteJson)
 
 	db := connectDB("test")
-	valid, user := ValidateUser(noteJson.Name, noteJson.Password, db)
+	valid, user := ValidateUser(noteJson.User, noteJson.Password, db)
 	if valid {
-		db.Model(&user).Association("UserNotes").Append(&UserNote{Name: noteJson.Name, RecipeName: noteJson.RecipeName, Note: noteJson.Note})
+		db.Model(&user).Association("UserNotes").Append(&UserNote{User: noteJson.User, RecipeName: noteJson.RecipeName, Note: noteJson.Note})
 		count := db.Model(&user).Association("UserNotes").Count()
 		fmt.Println("Number of notes: ", count)
 		json.NewEncoder(w).Encode(&noteJson)
@@ -169,7 +169,7 @@ func NotePost (w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&noteJson)
 
 	db := connectDB("test")
-	valid, user := ValidateUser(noteJson.Name, noteJson.Password, db)
+	valid, user := ValidateUser(noteJson.User, noteJson.Password, db)
 
 	if valid {
 		exists, note := NoteHelper(noteJson.RecipeName, user, db)
@@ -201,7 +201,7 @@ func NotePut(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&noteJson)
 
 	db := connectDB("test")
-	valid, user := ValidateUser(noteJson.Name, noteJson.Password, db)
+	valid, user := ValidateUser(noteJson.User, noteJson.Password, db)
 	
 	if valid {
 		var notes []UserNote
@@ -227,7 +227,7 @@ func NoteDelete(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&noteJson)
 
 	db := connectDB("test")
-	valid, user := ValidateUser(noteJson.Name, noteJson.Password, db)
+	valid, user := ValidateUser(noteJson.User, noteJson.Password, db)
 	
 	if valid {
 		var notes []UserNote
