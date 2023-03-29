@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../data.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -8,11 +9,13 @@ import { DataService } from '../data.service';
 })
 export class RegisterComponent implements OnInit {
   registerUserData = {
+    firstName: "",
+    lastName: "",
     name: "",
     password: "",
     allergies: ""
   }
-  constructor(private dataService: DataService) { }
+  constructor(private dataService: DataService, private router: Router) { }
   ngOnInit() {
   }
   registerUser() {
@@ -21,5 +24,6 @@ export class RegisterComponent implements OnInit {
         res => console.log(res),
         err => console.log(err)
       )
+      this.router.navigate(['/login']);
   }
 }

@@ -2,10 +2,10 @@
         <h1>Create Account</h1>
         <form class="register-form" fxLayout="row">
           <mat-form-field>
-          <input [(ngModel)]="registerUserData.name" name="name" type="text" matInput placeholder="First Name">
+          <input [(ngModel)]="registerUserData.firstName" name="name" type="text" matInput placeholder="First Name">
           </mat-form-field>
           <mat-form-field>
-            <input [(ngModel)]="registerUserData.name" name="name" type="text" matInput placeholder="Last Name">
+            <input [(ngModel)]="registerUserData.lastName" name="name" type="text" matInput placeholder="Last Name">
           </mat-form-field>
         </form>
         <form class="register-form" fxLayout="row">
@@ -19,5 +19,5 @@
         <mat-form-field class="field">
           <input [(ngModel)]="registerUserData.allergies" name="allergies" matInput placeholder="Allergies">
         </mat-form-field>
-      <button (click)="registerUser()" type="submit">Submit</button>
+      <button (click)="registerUser()" type="submit">Create</button>
 </div>
