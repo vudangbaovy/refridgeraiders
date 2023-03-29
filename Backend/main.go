@@ -12,7 +12,7 @@ use command "go run ." while in the backend directory for the go files to run
 */
 
 func main() {
-	if (false) {
+	if false {
 		RunTests()
 	} else {
 		host := "localhost:3000"
