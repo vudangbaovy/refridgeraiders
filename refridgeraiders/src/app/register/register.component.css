@@ -37,6 +37,7 @@ button {
     width: 150px;
     align-self: center;
     font-family: Poppins, sans-serif;
+    cursor: pointer;
 }
 
 h1 {

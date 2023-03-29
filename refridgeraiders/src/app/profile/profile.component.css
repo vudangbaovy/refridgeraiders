@@ -1,0 +1,27 @@
+.profile-pic {
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2);
+    background-image: url(/assets/avatar.png);
+    background-size: contain;
+    margin-left: 16px;
+    margin-top: 0px;
+}
+
+.container {
+    margin-left: 80px;
+    margin-top: 0px;
+    font-family: 'Poppins', sans-serif;
+}
+
+h1 {
+    font-size: 45px;
+    color: #ffffff;
+    margin-bottom: 0px;
+}
+
+p {
+    color: #ffffff;
+}

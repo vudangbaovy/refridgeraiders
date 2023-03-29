@@ -9,13 +9,14 @@
   <p class="right-link" (click)="clickButton('/register')">Register</p>
 </div>
 <div class="navbar" *ngIf="isLoggedIn">
-  <div><img
-    width="45"
+  <div class="link logo" (click)="clickButton('')"><img
+    width="200"
     alt="KitchenRescue Logo"
     src="./assets/logo-white.png"
   />
   </div>
-  <p class="right-link">Log Out</p>
+  <p class="right-link" (click)="clickButton('/profile')">Profile</p>
+  <p class="right-link" (click)="logout()">Log Out</p>
 </div>
 <div class="container">
   <router-outlet></router-outlet>

@@ -16,6 +16,9 @@ export class AppComponent {
   clickButton(path: string) {
     this.router.navigate([path]);
   }
+  logout() { 
+    this.dataService.logout();
+  }
   ngOnInit() {
     this.router.events.subscribe(event => {
       if (event.constructor.name === "NavigationEnd") {
