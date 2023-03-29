@@ -1,91 +1,122 @@
 <h2>Backend API</h2>
+<h3><p>Whats changed:</p><h3>
+<h4><p>1. "name" has been changed to "user" in all calls to differentiate bettween username and fist/last names.</p>
+<p>2. /user/register now takes different parameters, no longer takes allergies, only first and last name(not required)</p>
+<p>3. /user has two more calls, POST and PUT</p>
+<p>4. Two new calls, /note and /note/create</p>
+<p><h4>
+<br>
 <h3>Localhost:3000/allergies <h3>
 <h4> The /allergies calls need a JSON with the following: "name", "password" and "allergies".</p>
-The idea behind the call is to give the user's data about their allergies so once we get tokens working may change.</p>
-The allergies can be left blank, the only reason its included is because the call returns the data in the same format. (can be changed) </p>
-In the case of wrong password, we currently have it send an empty JSON of the same format. (will be changed to error codes)<h4></p>
+Gives the user's data about their allergies so once we get tokens working may change. The allergies can be left blank in the case of POST.</p>
+sends an empty json of same format if unsuccessful (will eventually be changed to error messages)<h4></p>
 <br>
 <p><h5>1. Getting User's Allergies: POST</p><h5>
 <p><h5>2. Updating User's Allergies: PUT</p><h5>
 <br>
 <h4><p>POST Example:<h4></p>
 <h6>
-<p>&emsp;   "name": "Nick",</p>
+<p>&emsp;   "user": "Nick",</p>
 <p>&emsp;   "password": "Pwe2",</p>
-<p>&emsp;   "allergies": ""<h6></p>
 <h4><p>Returns:<h4></p>
 <h6>
-<p>&emsp;   "name": "Nick",</p>
+<p>&emsp;   "user": "Nick",</p>
 <p>&emsp;   "password": "Pwe2",</p>
 <p>&emsp;   "allergies": "Pie"<h6></p>
 <h4><p>If Unsuccessful Returns:<h4></p>
 <h6>
-<p>&emsp;   "name": "",</p>
+<p>&emsp;   "user": "",</p>
 <p>&emsp;   "password": "",</p>
 <p>&emsp;   "allergies": ""<h6></p>
 <br>
+<h4><p>PUT Example:<h4></p>
+<h6>
+<p>&emsp;   "user": "Nick",</p>
+<p>&emsp;   "password": "Pwe2",</p>
+<p>&emsp;   "allergies": "NewAllergy,Pie"<h6></p>
+<h4><p>Returns:<h4></p>
+<h6>
+<p>&emsp;   "user": "Nick",</p>
+<p>&emsp;   "password": "Pwe2",</p>
+<p>&emsp;   "allergies": "NewAllergy,Pie"<h6></p>
+<br>
 <p><h3>Localhost:3000/user/register<h3>
-<h4>/user/register calls need a JSON with the following: "name", "password" and "allergies".</p>
-If there there is something wrong with what is sent, i.e. username taken, is sent empty JSON.<h4></p>
+<h4>/user/register calls need a JSON with the following: "name", "password", "firstN" and "lastN".</p>
+<p>creates a new user entry in the database, lastN and firstN can be left blank</p>
+sends an empty json of same format if unsuccessful (will eventually be changed to error messages)<h4></p>
 <br>
 <p><h5>1. Adding a new User: POST</p><h5>
 <br>
-<h4><p>Example:<h4></p>
+<h4><p>POST Example:<h4></p>
 <h6>
-<p>&emsp;   "name": "Nick",</p>
+<p>&emsp;   "user": "Nick",</p>
 <p>&emsp;   "password": "Pwe2",</p>
-<p>&emsp;   "allergies": "Pie"<h6></p>
+<p>&emsp;   "firstN": "Nicholas",</p>
+<p>&emsp;   "lastN": "Callahan"<h6></p>
 <h4><p>Returns:<h4></p>
 <h6>
-<p>&emsp;   "name": "Nick",</p>
+<p>&emsp;   "user": "Nick",</p>
 <p>&emsp;   "password": "Pwe2",</p>
-<p>&emsp;   "allergies": "Pie"<h6></p>
+<p>&emsp;   "firstN": "Nicholas",</p>
+<p>&emsp;   "lastN": "Callahan"<h6></p>
 <br>
 <p><h3>Localhost:3000/user<h3>
-<h4>/user calls need a JSON with the following: "name", "password" and "allergies".</p>
-will be changed later to not include allergies returns user's name, password and allergies if successful(used for testing)</p>
-sends an empty json of same format if unsuccessful login</p>
-will eventually be changed to error messages<h4></p>
+<h4>/user calls need a JSON with the following: "user", "password", "firstN" and "lastN".</p>
+returns username, password, first and last name</p>
+sends an empty json of same format if unsuccessful (will eventually be changed to error messages)<h4></p>
 <br>
-<p><h5>1. Deleting a new User: DELETE</p><h5>
+<p><h5>1. Getting a User's First & Last name: POST</p><h5>
+<p><h5>2. Changing a User's First & Last name: PUT</p><h5>
+<p><h5>3. Deleting a new User: DELETE</p><h5>
 <br>
-<h4><p>Example:<h4></p>
+<h4><p>POST Example:<h4></p>
 <h6>
-<p>&emsp;   "name": "Nick",</p>
+<p>&emsp;   "user": "Nick",</p>
 <p>&emsp;   "password": "Pwe2",</p>
-<p>&emsp;   "allergies": ""<h6></p>
 <h4><p>Returns:<h4></p>
 <h6>
-<p>&emsp;   "name": "Nick",</p>
+<p>&emsp;   "user": "Nick",</p>
 <p>&emsp;   "password": "Pwe2",</p>
-<p>&emsp;   "allergies": "Pie"<h6></p>
+<p>&emsp;   "firstN": "Nicholas",</p>
+<p>&emsp;   "lastN": "Callahan"<h6></p>
+<br>
+<h4><p>PUT Example:<h4></p>
+<h6>
+<p>&emsp;   "user": "Nick",</p>
+<p>&emsp;   "password": "Pwe2",</p>
+<p>&emsp;   "firstN": "NewFirstName",</p>
+<p>&emsp;   "lastN": "NewLastName"<h6></p>
+<h4><p>Returns:<h4></p>
+<h6>
+<p>&emsp;   "user": "Nick",</p>
+<p>&emsp;   "password": "Pwe2",</p>
+<p>&emsp;   "firstN": "NewFirstName",</p>
+<p>&emsp;   "lastN": "NewLastName"<h6></p>
 <br>
 <p><h3>Localhost:3000/note/create<h3>
-<h4>/note/create calls need a JSON with the following: "name", "password", "recipeName" and "note".</p>
-name and password required for right now until tokens, recipeName is the name of the recipe, and note is the note</p>
-sends an empty json of same format if unsuccessful login</p>
-will eventually be changed to error messages<h4></p>
+<h4>/note/create calls need a JSON with the following: "user", "password", "recipeName" and "note".</p>
+user and password required for right now until tokens, recipeName is the name of the recipe, and note is the note</p>
+sends an empty json of same format if unsuccessful (will eventually be changed to error messages)<h4></p>
 <br>
 <p><h5>1. Adding a new user note: POST</p><h5>
 <br>
 <h4><p>Example:<h4></p>
 <h6>
-<p>&emsp;   "name": "Nick",</p>
+<p>&emsp;   "user": "Nick",</p>
 <p>&emsp;   "password": "Pwe3",</p>
-<p>&emsp;   "recipeName": ""</p>
+<p>&emsp;   "recipeName": "Pizza"</p>
 <p>&emsp;   "note": "TOO MUCH CHEESE",<h6></p>
 <h4><p>Returns:<h4></p>
 <h6>
-<p>&emsp;   "name": "Nick",</p>
+<p>&emsp;   "user": "Nick",</p>
 <p>&emsp;   "password": "Pwe3",</p>
-<p>&emsp;   "recipeName": ""</p>
+<p>&emsp;   "recipeName": "Pizza"</p>
 <p>&emsp;   "note": "TOO MUCH CHEESE",<h6></p>
 <br>
 <p><h3>Localhost:3000/note<h3>
-<h4>/note calls need a JSON with the following: "name", "password", "recipeName" and "note".</p>
-name and password required for right now until tokens, recipeName is the name of the recipe, and note is the note</p>
-sends an empty json of same format if unsuccessful login</p>
-will eventually be changed to error messages<h4></p>
+<h4>/note calls need a JSON with the following: "user", "password", "recipeName" and "note".</p>
+same parameters as /note/create, note can be blank for POST</p>
+sends an empty json of same format if unsuccessful (will eventually be changed to error messages)<h4></p>
 <br>
 <p><h5>1. Gets a user's note: POST</p><h5>
 <p><h5>2. Updates a user's note: PUT</p><h5>
@@ -93,15 +124,14 @@ will eventually be changed to error messages<h4></p>
 <br>
 <h4><p>POST Example:<h4></p>
 <h6>
-<p>&emsp;   "name": "Nick",</p>
+<p>&emsp;   "user": "Nick",</p>
 <p>&emsp;   "password": "Pwe3",</p>
-<p>&emsp;   "recipeName": ""</p>
-<p>&emsp;   "note": "",<h6></p>
+<p>&emsp;   "recipeName": "Pizza"</p>
 <h4><p>Returns:<h4></p>
 <h6>
-<p>&emsp;   "name": "Nick",</p>
+<p>&emsp;   "user": "Nick",</p>
 <p>&emsp;   "password": "Pwe3",</p>
-<p>&emsp;   "recipeName": ""</p>
+<p>&emsp;   "recipeName": "Pizza"</p>
 <p>&emsp;   "note": "TOO MUCH CHEESE",<h6></p>
 <br>
 
