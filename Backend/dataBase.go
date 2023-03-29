@@ -17,7 +17,7 @@ import (
 // user profile definition
 type UserProfile struct {
 	gorm.Model
-	UserComments []UserComment `gorm:"foreignKey:UserRef"`
+	UserNotes []UserNote `gorm:"foreignKey:UserRef"`
 	Name       	string
 	Password   	string
 	Allergies  	string
@@ -29,19 +29,19 @@ type UserLoginJson struct {
 	Allergies  	string `json:"allergies"`
 }
 
-type UserCommentJson struct {
+type UserNoteJson struct {
 	Name       	string `json:"name"`
 	Password   	string `json:"password"`
 	RecipeName 	string `json:"recipeName"`
-	Comment		string `json:"comment"`
+	Note		string `json:"note"`
 }
 
-type UserComment struct {
+type UserNote struct {
 	gorm.Model
 	UserRef		uint
 	Name		string
 	RecipeName 	string
-	Comment		string
+	Note		string
 }
 
 // sets up Sqlite3 database
@@ -56,7 +56,7 @@ func connectDB(dbName string) *gorm.DB {
 
 // function wraps all of the auto migration calls: for future use
 func buildTables(db *gorm.DB) {
-	db.AutoMigrate(UserProfile{}, UserComment{})
+	db.AutoMigrate(UserProfile{}, UserNote{})
 }
 
 func UserRegisterPost(w http.ResponseWriter, r *http.Request) {
@@ -69,13 +69,13 @@ func UserRegisterPost(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(newUserJson)
 }
 
-func UserPost(w http.ResponseWriter, r *http.Request) {
+func AllergiesPost(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	var loginJson UserLoginJson
 	json.NewDecoder(r.Body).Decode(&loginJson)
 
-	valid, user := loginUser(loginJson.Name, loginJson.Password, connectDB("test")) //test db name
+	valid, user := loginUser(loginJson.Name, loginJson.Password, connectDB("test"))
 	if valid {
 		loginJson = UserLoginJson{Name: user.Name, Password: user.Password, Allergies: user.Allergies}
 		json.NewEncoder(w).Encode(&loginJson)
@@ -85,14 +85,14 @@ func UserPost(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func UserPut(w http.ResponseWriter, r *http.Request) {
+func AllergiesPut(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	var loginJson UserLoginJson
 	json.NewDecoder(r.Body).Decode(&loginJson)
 
-	db := connectDB("test")//test db name
-	valid, user := loginUser(loginJson.Name, loginJson.Password, db) //returns if valid user and the user profile
+	db := connectDB("test")
+	valid, user := loginUser(loginJson.Name, loginJson.Password, db)
 	if valid {
 		loginJson = UserLoginJson{Name: user.Name, Password: user.Password, Allergies: user.Allergies}
 		json.NewEncoder(w).Encode(&loginJson)
@@ -102,33 +102,33 @@ func UserPut(w http.ResponseWriter, r *http.Request) {
 }
 
 func UserDelete(w http.ResponseWriter, r *http.Request) {
-
+	//deletes a user from the db
 	w.Header().Set("Content-Type", "application/json")
 	var deleteJson UserLoginJson
 	json.NewDecoder(r.Body).Decode(&deleteJson)
 
 	db := connectDB("test")
-	var deleteUser UserProfile
-	db.Where("Name = ?", deleteJson.Name).First(&deleteUser)
-	if deleteUser.ID != 0 && deleteJson.Password == deleteUser.Password {
-		db.Delete(&deleteUser)
-		json.NewEncoder(w).Encode(&deleteJson)
+	valid, user := loginUser(deleteJson.Name, deleteJson.Password, db)
+
+	if valid {
+		db.Unscoped().Delete(&user)
+		json.NewEncoder(w).Encode(&user)
 	} else {
-		json.NewEncoder(w).Encode(&UserLoginJson{})
+		json.NewEncoder(w).Encode(&UserProfile{})
 	}
 }
 
-// adding users function: future use when more tables added
 func addUser(addUser *UserProfile, db *gorm.DB) (bool, *UserProfile) {
+	//adds users and returns bool and user profile type
 	searchUser := UserProfile{}
 	err := db.Limit(1).Find("Name = ?", addUser.Name).First(&searchUser)
 
 	if err.Error != nil {
-		result := db.Omit("UserComment").Create(&addUser)
+		result := db.Omit("UserNote").Create(&addUser)
 		fmt.Println("User Added  : ", addUser.Name, " : Rows effected : ", result.RowsAffected)
 		return true, addUser
 	}
-	return false, &searchUser
+	return false, &UserProfile{}
 }
 
 func loginUser(inputUserName string, inputPassword string, db *gorm.DB) (bool, *UserProfile) {
@@ -145,48 +145,51 @@ func loginUser(inputUserName string, inputPassword string, db *gorm.DB) (bool, *
 	return true, &user
 }
 
-func recipeComAddPost(w http.ResponseWriter, r *http.Request) {
+func CreateNotePost(w http.ResponseWriter, r *http.Request) {
+	//function add a new userNote type to personal user profile, username, password, and recipe required in json body
 	w.Header().Set("Content-Type", "application/json")
-	var commentJson UserCommentJson
-	json.NewDecoder(r.Body).Decode(&commentJson)
+	var noteJson UserNoteJson
+	json.NewDecoder(r.Body).Decode(&noteJson)
 
 	db := connectDB("test")
-	valid, user := loginUser(commentJson.Name, commentJson.Password, db)
+	valid, user := loginUser(noteJson.Name, noteJson.Password, db)
 	if valid {
-		db.Model(&user).Association("UserComments").Append(&UserComment{Name: commentJson.Name, RecipeName: commentJson.RecipeName, Comment: commentJson.Comment})
-		count := db.Model(&user).Association("UserComments").Count()
-		fmt.Println("Number of comments: ", count)
-		json.NewEncoder(w).Encode(&commentJson)
+		db.Model(&user).Association("UserNotes").Append(&UserNote{Name: noteJson.Name, RecipeName: noteJson.RecipeName, Note: noteJson.Note})
+		count := db.Model(&user).Association("UserNotes").Count()
+		fmt.Println("Number of notes: ", count)
+		json.NewEncoder(w).Encode(&noteJson)
 	} else {
-		json.NewEncoder(w).Encode(&UserCommentJson{})
+		json.NewEncoder(w).Encode(&UserNoteJson{})
 	}
 }
 
-func recipeComPost (w http.ResponseWriter, r *http.Request) {
+func NotePost (w http.ResponseWriter, r *http.Request) {
+	//function retrives a user's personal note on a recipe, requires a username, password and recipe as json
 	w.Header().Set("Content-Type", "application/json")
-	var commentJson UserCommentJson
-	json.NewDecoder(r.Body).Decode(&commentJson)
+	var noteJson UserNoteJson
+	json.NewDecoder(r.Body).Decode(&noteJson)
 
 	db := connectDB("test")
-	valid, user := loginUser(commentJson.Name, commentJson.Password, db)
+	valid, user := loginUser(noteJson.Name, noteJson.Password, db)
 
 	if valid {
-		exists, com := recipeComHelper(commentJson.RecipeName, user, db)
+		exists, note := NoteHelper(noteJson.RecipeName, user, db)
 		if exists {
-			commentJson.Comment = com
+			noteJson.Note = note
 		}
-		json.NewEncoder(w).Encode(&commentJson)
+		json.NewEncoder(w).Encode(&noteJson)
 	} else {
-		json.NewEncoder(w).Encode(&UserCommentJson{})
+		json.NewEncoder(w).Encode(&UserNoteJson{})
 	}
 }
 
-func recipeComHelper(targetRecipe string, user *UserProfile, db *gorm.DB)(bool, string){
-	var comments []UserComment
-	db.Model(&user).Association("UserComments").Find(&comments)
-	for _, v := range comments {
+func NoteHelper(targetRecipe string, user *UserProfile, db *gorm.DB)(bool, string){
+	//helper function for recipeComPost, searches for targeted recipe in list of notes made by user
+	var notes []UserNote
+	db.Model(&user).Association("UserNotes").Find(&notes)
+	for _, v := range notes {
 		if v.RecipeName == targetRecipe {
-			return true, v.Comment
+			return true, v.Note
 		}
 	}
 	return false, ""

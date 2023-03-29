@@ -10,13 +10,13 @@ import (
 	"io/ioutil"
 	"gorm.io/gorm"
 )
-//test 1
+//test 0
 func testUserAdd(db *gorm.DB)(bool) {
 	//adding users test code
 	numberOfEntries := uint(3)
 	insertedUsers := make([]UserProfile, numberOfEntries)
 
-	fmt.Println("\nTest 1 -------------------------------------")
+	fmt.Println("\nTest 0 -------------------------------------")
 	for  i := uint(0); i < numberOfEntries; i++ { //starts at last id so no duplicates in db accidently get deleted
 		insertedUsers[i].Name = "UATest" + strconv.FormatUint(uint64(i), 10)//creates userprofiles and adds them to db
 		insertedUsers[i].Password = "password" + strconv.FormatUint(uint64(i), 10)
@@ -45,11 +45,11 @@ func testUserAdd(db *gorm.DB)(bool) {
 	}
 	return true//passed
 }
-//test 2
+//test 1
 func testUserSearch(db *gorm.DB)(bool) {
 	//testing searching users
 
-	fmt.Println("\nTest 2 -------------------------------------")
+	fmt.Println("\nTest 1 -------------------------------------")
 	var insertedUser UserProfile
 	insertedUser.Name = "USTest1"//creates userprofiles and adds them to db
 	insertedUser.Password = "password1"
@@ -72,11 +72,11 @@ func testUserSearch(db *gorm.DB)(bool) {
 	return true//passed
 }
 
-//test 3
+//test 2
 func testUserPost()(bool) {
 
 
-	fmt.Println("\nTest 3 -------------------------------------")
+	fmt.Println("\nTest 2 -------------------------------------")
 	time.Sleep(100 * time.Millisecond)
 	postBody, _ := json.Marshal(map[string]string{
 		"name": "Nick",
@@ -86,7 +86,7 @@ func testUserPost()(bool) {
 
 	responseBody  := bytes.NewBuffer(postBody)
 
-	res, err := http.Post("http://localhost:3000/User", "application/json", responseBody)
+	res, err := http.Post("http://localhost:3000/allergies", "application/json", responseBody)
 	if err != nil {
 		fmt.Printf("Request Error: %s\n", err)
 		return false
@@ -104,7 +104,80 @@ func testUserPost()(bool) {
 	return false
 }
 
+//test 3
+func testComments()(bool) {
+	fmt.Println("\nTest 3 -------------------------------------")
 
+	postBody, _ := json.Marshal(map[string]string{
+		"name": "Nick",
+		"password": "Pwe2",
+		"RecipeName": "Cake",
+		"note": "",
+	})
+	responseBody  := bytes.NewBuffer(postBody)
+
+	res, err := http.Post("http://localhost:3000/note", "application/json", responseBody)
+	if err != nil {
+		fmt.Printf("Request Error: %s\n", err)
+		return false
+	}
+
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Printf("Read Error: %s\n", err)
+	}
+	if string(body) == "{\"name\":\"Nick\",\"password\":\"Pwe2\",\"recipeName\":\"Cake\",\"note\":\"Great Tasting\"}\n"{
+		return true
+	}
+	return false
+}
+
+//startup Tests
+func StartUpTest() {
+	postBody, _ := json.Marshal(map[string]string{
+		"name": "Server",
+		"password": "Starting",
+		"allergies": "Test",
+	})
+	responseBody  := bytes.NewBuffer(postBody)
+
+	res, err := http.Post("http://localhost:3000/servertest", "application/json", responseBody)
+	if err != nil {
+		fmt.Printf("Request Error: %s\n", err)
+		fmt.Println("Failed To Connect To server : 148")
+		return
+	}
+
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Printf("Read Error: %s\n", err)
+		fmt.Println("Failed To Connect To server : 157")
+		return
+	} else {
+		if string(body) == "{\"name\":\"Server\",\"password\":\"Starting\",\"allergies\":\"Test\"}\n"{
+			fmt.Println("Connect To server")
+			return
+		}
+		fmt.Println("Failed To Connect To server : 164")
+		return
+	}
+}
+func JsonTest(w http.ResponseWriter, r *http.Request) {
+
+		w.Header().Set("Content-Type", "application/json")
+		var JsonFrame UserLoginJson
+		json.NewDecoder(r.Body).Decode(&JsonFrame)
+	
+		if JsonFrame.Name == "Server" && JsonFrame.Password == "Starting" && JsonFrame.Allergies == "Test" {
+			json.NewEncoder(w).Encode(&JsonFrame)
+		} else {
+			json.NewEncoder(w).Encode(&UserLoginJson{})
+		}
+}
 
 
 func testLoginUser(db *gorm.DB) {

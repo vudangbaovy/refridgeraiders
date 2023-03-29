@@ -15,12 +15,15 @@ func httpHandler() http.Handler {
 	// Your REST API requests go here
 
 	//TODO: Change login to a post request add a post request for creating an account registration
-	router.HandleFunc("/User", UserPost).Methods("POST")
-	router.HandleFunc("/User", UserPut).Methods("PUT")
-	router.HandleFunc("/User", UserDelete).Methods("DELETE")
-	router.HandleFunc("/User/Register", UserRegisterPost).Methods("POST")
-	router.HandleFunc("/Recipe/Comment/Add", recipeComAddPost).Methods("POST")
-	router.HandleFunc("/Recipe/Comment", recipeComPost).Methods("POST")
+	router.HandleFunc("/allergies", AllergiesPost).Methods("POST")
+	router.HandleFunc("/allergies", AllergiesPut).Methods("PUT")
+	router.HandleFunc("/user", UserDelete).Methods("DELETE")
+	router.HandleFunc("/user/register", UserRegisterPost).Methods("POST")
+	router.HandleFunc("/note/create", CreateNotePost).Methods("POST")
+	router.HandleFunc("/note", NotePost).Methods("POST")
+
+	//start up tests
+	router.HandleFunc("/servertest", JsonTest).Methods("POST")
 
 	// Add your routes here.
 	// WARNING: this route must be the last route defined.
