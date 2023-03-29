@@ -18,39 +18,40 @@ import (
 type UserProfile struct {
 	gorm.Model
 	UserNotes []UserNote `gorm:"foreignKey:UserRef"`
-	User    	string
-	FirstN		string
-	LastN		string
-	Password   	string
-	Allergies  	string
+	User      string
+	FirstN    string
+	LastN     string
+	Password  string
+	Allergies string
 }
-//types are seperated into json to send only send specific data
+
+// types are seperated into json to send only send specific data
 type AllergiesJson struct {
-	User    	string `json:"user"`
-	Password   	string `json:"password"`
-	Allergies  	string `json:"allergies"`
+	User      string `json:"user"`
+	Password  string `json:"password"`
+	Allergies string `json:"allergies"`
 }
 
 type LoginJson struct {
-	User    	string `json:"user"`
-	Password   	string `json:"password"`
-	FirstN  	string `json:"firstN"`
-	LastN  		string `json:"lastN"`
+	User     string `json:"user"`
+	Password string `json:"password"`
+	FirstN   string `json:"firstN"`
+	LastN    string `json:"lastN"`
 }
 
 type UserNoteJson struct {
-	User    	string `json:"user"`
-	Password   	string `json:"password"`
-	RecipeName 	string `json:"recipeName"`
-	Note		string `json:"note"`
+	User       string `json:"user"`
+	Password   string `json:"password"`
+	RecipeName string `json:"recipeName"`
+	Note       string `json:"note"`
 }
 
 type UserNote struct {
 	gorm.Model
-	UserRef		uint
-	User		string
-	RecipeName 	string
-	Note		string
+	UserRef    uint
+	User       string
+	RecipeName string
+	Note       string
 }
 
 // sets up Sqlite3 database
@@ -72,8 +73,15 @@ func UserRegisterPost(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	var newUserJson LoginJson
+	// change the password to be hashed
+	hash, err := hashedPass(newUserJson.Password)
+	if err != nil {
+		fmt.Println("password unable to be hashed")
+	}
+
 	json.NewDecoder(r.Body).Decode(&newUserJson)
-	user := UserProfile{User: newUserJson.User, Password: newUserJson.Password, 
+
+	user := UserProfile{User: newUserJson.User, Password: hash,
 		FirstN: newUserJson.FirstN, LastN: newUserJson.LastN, Allergies: ""}
 	addUser(&user, connectDB("test"))
 	json.NewEncoder(w).Encode(newUserJson)
@@ -85,7 +93,7 @@ func UserPOST(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&LUS)
 
 	db := connectDB("test")
-	valid, user := ValidateUser(LUS.User,LUS.Password,db)
+	valid, user := ValidateUser(LUS.User, LUS.Password, db)
 	if valid {
 		LUS.FirstN = user.FirstN
 		LUS.LastN = user.LastN
@@ -101,7 +109,7 @@ func UserPUT(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&LUS)
 
 	db := connectDB("test")
-	valid, user := ValidateUser(LUS.User,LUS.Password,db)
+	valid, user := ValidateUser(LUS.User, LUS.Password, db)
 	if valid {
 		db.Model(&user).Updates(UserProfile{FirstN: LUS.FirstN, LastN: LUS.LastN})
 		json.NewEncoder(w).Encode(&LUS)
@@ -203,7 +211,7 @@ func CreateNotePost(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func NotePost (w http.ResponseWriter, r *http.Request) {
+func NotePost(w http.ResponseWriter, r *http.Request) {
 	//function retrives a user's personal note on a recipe, requires a username, password and recipe as json
 	w.Header().Set("Content-Type", "application/json")
 	var noteJson UserNoteJson
@@ -223,13 +231,13 @@ func NotePost (w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func NoteHelper(targetRecipe string, user *UserProfile, db *gorm.DB)(bool, string){
+func NoteHelper(targetRecipe string, user *UserProfile, db *gorm.DB) (bool, string) {
 	//helper function for recipeComPost, searches for targeted recipe in list of notes made by user
 	var notes []UserNote
 	db.Model(&user).Association("UserNotes").Find(&notes)
 	for _, v := range notes {
 		if v.RecipeName == targetRecipe {
-			return true,  v.Note
+			return true, v.Note
 		}
 	}
 	return false, ""
@@ -243,7 +251,7 @@ func NotePut(w http.ResponseWriter, r *http.Request) {
 
 	db := connectDB("test")
 	valid, user := ValidateUser(noteJson.User, noteJson.Password, db)
-	
+
 	if valid {
 		var notes []UserNote
 		db.Model(&user).Association("UserNotes").Find(&notes)
@@ -269,7 +277,7 @@ func NoteDelete(w http.ResponseWriter, r *http.Request) {
 
 	db := connectDB("test")
 	valid, user := ValidateUser(noteJson.User, noteJson.Password, db)
-	
+
 	if valid {
 		var notes []UserNote
 		db.Model(&user).Association("UserNotes").Find(&notes)
