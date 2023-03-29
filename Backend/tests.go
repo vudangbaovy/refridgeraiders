@@ -105,7 +105,7 @@ func testUserPost()(bool) {
 }
 
 //test 3
-func testComments()(bool) {
+func testNotes()(bool) {
 	fmt.Println("\nTest 3 -------------------------------------")
 
 	postBody, _ := json.Marshal(map[string]string{
@@ -128,7 +128,7 @@ func testComments()(bool) {
 	if err != nil {
 		fmt.Printf("Read Error: %s\n", err)
 	}
-	if string(body) == "{\"name\":\"Nick\",\"password\":\"Pwe2\",\"recipeName\":\"Cake\",\"note\":\"Great Tasting\"}\n"{
+	if string(body) == "{\"name\":\"Nick\",\"password\":\"Pwe2\",\"recipeName\":\"Cake\",\"note\":\"Too Much Sugar\"}\n"{
 		return true
 	}
 	return false
@@ -179,7 +179,39 @@ func JsonTest(w http.ResponseWriter, r *http.Request) {
 		}
 }
 
+func RunTests() {
 
+	db := connectDB("test")
+	buildTables(db)
+
+	var user UserProfile
+	db.First(&user)
+	fmt.Println("Test Username: ",user.Name)
+	fmt.Println("Test Password: ",user.Password)
+
+	var results [4]bool
+	fmt.Println("\nRunning DB Tests...")
+	results[0] = testUserAdd(db)
+	results[1] = testUserSearch(db)
+
+	//server tests
+	host := "localhost:3000"
+	go http.ListenAndServe(host, httpHandler())
+
+	results[2] = testUserPost()
+	results[3] = testNotes()
+	fmt.Println("\nTest Results: ")
+	
+	for i, v := range results {
+		if v {
+			fmt.Printf("Test %d Passed\n", i)
+		} else {
+			fmt.Printf("Test %d Failed\n", i)
+		}
+	}
+}
+
+//unused tests
 func testLoginUser(db *gorm.DB) {
 	//allows for command line tests of login function
 	numberOfEntries := 0
@@ -193,7 +225,7 @@ func testLoginUser(db *gorm.DB) {
 		fmt.Scan(&loginName)
 		fmt.Print("Enter Password To Login: ")
 		fmt.Scan(&inputPassword)
-		validLogin, user := loginUser(loginName, inputPassword, db)
+		validLogin, user := ValidateUser(loginName, inputPassword, db)
 
 		if validLogin {
 			fmt.Println("\nLogin Successful\nStored Information:\nUserName: " + user.Name + "\nPassword: " + user.Password)

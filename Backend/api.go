@@ -14,13 +14,16 @@ func httpHandler() http.Handler {
 	router := mux.NewRouter()
 	// Your REST API requests go here
 
-	//TODO: Change login to a post request add a post request for creating an account registration
+	//allergies update or get allergy data
 	router.HandleFunc("/allergies", AllergiesPost).Methods("POST")
 	router.HandleFunc("/allergies", AllergiesPut).Methods("PUT")
-	router.HandleFunc("/user", UserDelete).Methods("DELETE")
+	//user is user management in db
 	router.HandleFunc("/user/register", UserRegisterPost).Methods("POST")
+	router.HandleFunc("/user", UserDelete).Methods("DELETE")
+	//note is personal comments on recipes
 	router.HandleFunc("/note/create", CreateNotePost).Methods("POST")
 	router.HandleFunc("/note", NotePost).Methods("POST")
+	router.HandleFunc("/note", NotePut).Methods("PUT")
 
 	//start up tests
 	router.HandleFunc("/servertest", JsonTest).Methods("POST")

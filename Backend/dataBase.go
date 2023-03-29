@@ -65,7 +65,7 @@ func UserRegisterPost(w http.ResponseWriter, r *http.Request) {
 	var newUserJson UserLoginJson
 	json.NewDecoder(r.Body).Decode(&newUserJson)
 	user := UserProfile{Name: newUserJson.Name, Password: newUserJson.Password, Allergies: newUserJson.Allergies}
-	addUser(&user, connectDB("test")) //test db name
+	addUser(&user, connectDB("test"))
 	json.NewEncoder(w).Encode(newUserJson)
 }
 
@@ -75,14 +75,13 @@ func AllergiesPost(w http.ResponseWriter, r *http.Request) {
 	var loginJson UserLoginJson
 	json.NewDecoder(r.Body).Decode(&loginJson)
 
-	valid, user := loginUser(loginJson.Name, loginJson.Password, connectDB("test"))
+	valid, user := ValidateUser(loginJson.Name, loginJson.Password, connectDB("test"))
 	if valid {
 		loginJson = UserLoginJson{Name: user.Name, Password: user.Password, Allergies: user.Allergies}
 		json.NewEncoder(w).Encode(&loginJson)
 	} else {
 		json.NewEncoder(w).Encode(&UserLoginJson{})
 	}
-
 }
 
 func AllergiesPut(w http.ResponseWriter, r *http.Request) {
@@ -92,7 +91,7 @@ func AllergiesPut(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&loginJson)
 
 	db := connectDB("test")
-	valid, user := loginUser(loginJson.Name, loginJson.Password, db)
+	valid, user := ValidateUser(loginJson.Name, loginJson.Password, db)
 	if valid {
 		loginJson = UserLoginJson{Name: user.Name, Password: user.Password, Allergies: user.Allergies}
 		json.NewEncoder(w).Encode(&loginJson)
@@ -108,7 +107,7 @@ func UserDelete(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&deleteJson)
 
 	db := connectDB("test")
-	valid, user := loginUser(deleteJson.Name, deleteJson.Password, db)
+	valid, user := ValidateUser(deleteJson.Name, deleteJson.Password, db)
 
 	if valid {
 		db.Unscoped().Delete(&user)
@@ -131,12 +130,12 @@ func addUser(addUser *UserProfile, db *gorm.DB) (bool, *UserProfile) {
 	return false, &UserProfile{}
 }
 
-func loginUser(inputUserName string, inputPassword string, db *gorm.DB) (bool, *UserProfile) {
+func ValidateUser(inputUserName string, inputPassword string, db *gorm.DB) (bool, *UserProfile) {
 	//function tests inputted username and password against database, returns true and user's profile struct if successful
 	//returns false and empty struct if unsuccessful
 	var user UserProfile
 
-	fmt.Println("User Login  : Username:", inputUserName, " Password:", inputPassword)
+	//fmt.Println("User Login  : Username:", inputUserName, " Password:", inputPassword)
 	err := db.Where("Name = ?", inputUserName).First(&user)
 	if err.Error != nil || user.Password != inputPassword {
 		fmt.Println("Login Attempt Failed")
@@ -152,7 +151,7 @@ func CreateNotePost(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&noteJson)
 
 	db := connectDB("test")
-	valid, user := loginUser(noteJson.Name, noteJson.Password, db)
+	valid, user := ValidateUser(noteJson.Name, noteJson.Password, db)
 	if valid {
 		db.Model(&user).Association("UserNotes").Append(&UserNote{Name: noteJson.Name, RecipeName: noteJson.RecipeName, Note: noteJson.Note})
 		count := db.Model(&user).Association("UserNotes").Count()
@@ -170,7 +169,7 @@ func NotePost (w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&noteJson)
 
 	db := connectDB("test")
-	valid, user := loginUser(noteJson.Name, noteJson.Password, db)
+	valid, user := ValidateUser(noteJson.Name, noteJson.Password, db)
 
 	if valid {
 		exists, note := NoteHelper(noteJson.RecipeName, user, db)
@@ -189,8 +188,35 @@ func NoteHelper(targetRecipe string, user *UserProfile, db *gorm.DB)(bool, strin
 	db.Model(&user).Association("UserNotes").Find(&notes)
 	for _, v := range notes {
 		if v.RecipeName == targetRecipe {
-			return true, v.Note
+			return true,  v.Note
 		}
 	}
 	return false, ""
+}
+
+func NotePut(w http.ResponseWriter, r *http.Request) {
+	//function takes json object with updated note value
+	w.Header().Set("Content-Type", "application/json")
+	var noteJson UserNoteJson
+	json.NewDecoder(r.Body).Decode(&noteJson)
+
+	db := connectDB("test")
+	valid, user := ValidateUser(noteJson.Name, noteJson.Password, db)
+	
+	if valid {
+		var notes []UserNote
+		db.Model(&user).Association("UserNotes").Find(&notes)
+		for i, v := range notes {
+			if v.RecipeName == noteJson.RecipeName {
+				notes[i].Note = noteJson.Note
+				db.Model(&user).Association("UserNotes").Replace(notes)
+				db.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&user)
+				json.NewEncoder(w).Encode(&noteJson)
+				return
+			}
+		}
+		json.NewEncoder(w).Encode(&UserNoteJson{})
+	} else {
+		json.NewEncoder(w).Encode(&UserNoteJson{})
+	}
 }
