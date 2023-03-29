@@ -12,8 +12,8 @@ use command "go run ." while in the backend directory for the go files to run
 */
 
 func main() {
-	if false {
-		RunTests(false)
+	if true {
+		RunUnitTests(true)
 	} else {
 		host := "localhost:3000"
 		fmt.Println("Server Starting...")

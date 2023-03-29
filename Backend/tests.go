@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 //test 0
-func testUserAdd(db *gorm.DB)(bool) {
+func testDBAdd(db *gorm.DB)(bool) {
 	//adding users test code
 	numberOfEntries := uint(3)
 	insertedUsers := make([]UserProfile, numberOfEntries)
@@ -47,7 +47,7 @@ func testUserAdd(db *gorm.DB)(bool) {
 	return true//passed
 }
 //test 1
-func testUserSearch(db *gorm.DB)(bool) {
+func testDBSearch(db *gorm.DB)(bool) {
 	//testing searching users
 
 	fmt.Println("\nTest 1 -------------------------------------")
@@ -72,10 +72,8 @@ func testUserSearch(db *gorm.DB)(bool) {
 	fmt.Println("user Deleted: ", insertedUser.User, " : Rows Affected : ", result.RowsAffected)
 	return true//passed
 }
-
-//test 2
-func testUserPost()(bool) {
-
+//test 2 - looks up a pre existing user's allergies
+func testAllergiesPost()(bool) {
 	fmt.Println("\nTest 2 -------------------------------------")
 	time.Sleep(100 * time.Millisecond)
 	postBody, _ := json.Marshal(map[string]string{
@@ -103,9 +101,8 @@ func testUserPost()(bool) {
 	}
 	return false
 }
-
-//test 3
-func testNotes()(bool) {
+//test 3 - looks up a pre existing note
+func testNotesPOST()(bool) {
 	fmt.Println("\nTest 3 -------------------------------------")
 
 	postBody, _ := json.Marshal(map[string]string{
@@ -132,6 +129,107 @@ func testNotes()(bool) {
 		return true
 	}
 	return false
+}
+//test 4 - looks up a pre existing user's first and last name
+func testUserPOST()(bool) {
+	fmt.Println("\nTest 4 -------------------------------------")
+
+	client := &http.Client{}
+
+	postBody, _ := json.Marshal(map[string]string{
+		"user": "Nick",
+		"password": "Pwe2",
+	})
+
+	req, err := http.NewRequest(http.MethodPost, "http://localhost:3000/user", bytes.NewBuffer(postBody))
+	if err != nil {
+		fmt.Printf("Request Error: %s\n", err)
+		return false
+	}
+
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+    res, err := client.Do(req)
+	if err != nil {
+        fmt.Printf("Request Error: %s\n", err)
+		return false
+    }
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Printf("Read Error: %s\n", err)
+	}
+	if string(body) == "{\"user\":\"Nick\",\"password\":\"Pwe2\",\"firstN\":\"Nicholas\",\"lastN\":\"Callahan\"}\n"{
+		return true
+	}
+	return false
+}
+//test 5 - Changes a user's name
+func testUserPUT()(bool) {
+	fmt.Println("\nTest 4 -------------------------------------")
+
+	client := &http.Client{}
+
+	//first message
+	postBody, _ := json.Marshal(map[string]string{
+		"user": "Nick",
+		"password": "Pwe2",
+		"firstN": "George",
+		"lastN": "Washington",
+	})
+
+	//sends message
+	req, err := http.NewRequest(http.MethodPut, "http://localhost:3000/user", bytes.NewBuffer(postBody))
+	if err != nil {
+		fmt.Printf("Request Error: %s\n", err)
+		return false
+	}
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+    res, err := client.Do(req)
+	if err != nil {
+        fmt.Printf("Request Error: %s\n", err)
+		return false
+    }
+
+	//checks response
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Printf("Read Error: %s\n", err)
+	}
+	if string(body) != "{\"user\":\"Nick\",\"password\":\"Pwe2\",\"firstN\":\"George\",\"lastN\":\"Washington\"}\n"{
+		return false
+	}
+
+
+	//checks if db saved ealier change
+	//second message
+	postBody2, _ := json.Marshal(map[string]string{
+		"user": "Nick",
+		"password": "Pwe2",
+	})
+
+	//sends second message
+	req2, err := http.NewRequest(http.MethodPost, "http://localhost:3000/user", bytes.NewBuffer(postBody2))
+	if err != nil {
+		fmt.Printf("Request Error: %s\n", err)
+		return false
+	}
+	req2.Header.Set("Content-Type", "application/json; charset=utf-8")
+    res2, err := client.Do(req)
+	if err != nil {
+        fmt.Printf("Request Error: %s\n", err)
+		return false
+    }
+
+	//checks response
+	body2, err := ioutil.ReadAll(res2.Body)
+	if err != nil {
+		fmt.Printf("Read Error: %s\n", err)
+	}
+	if string(body2) == "{\"user\":\"Nick\",\"password\":\"Pwe2\",\"firstN\":\"George\",\"lastN\":\"Washington\"}\n"{
+		return true
+	} else {
+		return false
+	}
 }
 
 //startup Tests
@@ -179,13 +277,13 @@ func JsonTest(w http.ResponseWriter, r *http.Request) {
 		}
 }
 
-func RunTests(dbEmpty bool) {
-
+func RunUnitTests(dbEmpty bool) {
+//bool parameter is for if the db is empty so a default entry can be added
 	db := connectDB("test")
 	buildTables(db)
 
 	if dbEmpty {
-		defaultUser := UserProfile{User: "Nick", Password: "Pwe2", Allergies: "Pie"}
+		defaultUser := UserProfile{User: "Nick", Password: "Pwe2", FirstN: "Nicholas", LastN: "Callahan" , Allergies: "Pie"}
 		addUser(&defaultUser,db)
 		db.Model(&defaultUser).Association("UserNotes").Append(&UserNote{User: defaultUser.User, 
 			RecipeName: "Cake", Note: "Too Much Sugar"})
@@ -197,17 +295,18 @@ func RunTests(dbEmpty bool) {
 	fmt.Println("Test Username: ",user.User)
 	fmt.Println("Test Password: ",user.Password)
 
-	var results [4]bool
+	var results [5]bool
 	fmt.Println("\nRunning DB Tests...")
-	results[0] = testUserAdd(db)
-	results[1] = testUserSearch(db)
+	results[0] = testDBAdd(db)
+	results[1] = testDBSearch(db)
 
 	//server tests
 	host := "localhost:3000"
 	go http.ListenAndServe(host, httpHandler())
 
-	results[2] = testUserPost()
-	results[3] = testNotes()
+	results[2] = testAllergiesPost()
+	results[3] = testNotesPOST()
+	results[4] = testUserPOST()
 	fmt.Println("\nTest Results: ")
 	
 	for i, v := range results {
@@ -215,134 +314,6 @@ func RunTests(dbEmpty bool) {
 			fmt.Printf("Test %d Passed\n", i)
 		} else {
 			fmt.Printf("Test %d Failed\n", i)
-		}
-	}
-}
-
-//unused tests
-func testLoginUser(db *gorm.DB) {
-	//allows for command line tests of login function
-	numberOfEntries := 0
-	fmt.Print("Enter Number of Login Tests: ")
-	fmt.Scan(&numberOfEntries)
-
-	for i := 0; i < numberOfEntries; i++ {
-		var loginName string
-		var inputPassword string
-		fmt.Print("Enter User To Login: ")
-		fmt.Scan(&loginName)
-		fmt.Print("Enter Password To Login: ")
-		fmt.Scan(&inputPassword)
-		validLogin, user := ValidateUser(loginName, inputPassword, db)
-
-		if validLogin {
-			fmt.Println("\nLogin Successful\nStored Information:\nUserName: " + user.User + "\nPassword: " + user.Password)
-			fmt.Println("Allergies: " + user.Allergies + "\nCreatedAt: " + user.CreatedAt.String())
-			fmt.Println()
-		} else {
-			fmt.Println("Invalid Login")
-		}
-	}
-}
-
-func testSoftDelete(db *gorm.DB) {
-	//framework for future functions used to softDelete
-	softDeletes := 0
-	fmt.Print("Enter Number of softDeletes: ")
-	fmt.Scan(&softDeletes)
-	for i := 0; i < softDeletes; i++ {
-		var deleteUser UserProfile
-		var dUserName string
-		fmt.Print("Enter userName To Be Soft Deleted: ")
-		fmt.Scan(&dUserName)
-		db.Where("User = ?", dUserName).First(&deleteUser)
-		db.Delete(&deleteUser)
-		deleteUser = UserProfile{}
-		db.Unscoped().Where("User = ?", dUserName).First(&deleteUser)
-		fmt.Println("\n" + dUserName + " was soft deleted at: " + deleteUser.DeletedAt.Time.String())
-	}
-}
-
-func testReturnSoftDelete(db *gorm.DB) {
-	//Demonstration/Framework function used to show how the database works with returning softdeleted data
-
-	returns := 0
-	fmt.Print("Enter Number of Returns: ")
-	fmt.Scan(&returns)
-	for i := 0; i < returns; i++ {
-		var returnedUser UserProfile
-		var rUserName string
-
-		fmt.Print("Enter userName To Be Returned: ")
-		fmt.Scan(&rUserName)
-
-		db.Unscoped().Where("User = ?", rUserName).First(&returnedUser).Update("deleted_at", nil)
-
-		returnedUser = UserProfile{}
-		db.Where("User = ?", rUserName).First(&returnedUser)
-
-		fmt.Println("\n" + rUserName + " Has been returned to the database, printing stored data: ")
-		fmt.Println("User: " + returnedUser.User + "\nPassword: " + returnedUser.Password)
-		fmt.Println("Allergies: " + returnedUser.Allergies + "\nCreatedAt: " + returnedUser.CreatedAt.String())
-	}
-}
-
-func testUpdate(db *gorm.DB) {
-	//function allows user to update specific fields from the commandline used to show how interaction with
-	//database works/is a framework for future functions
-
-	updates := 0
-	fmt.Print("Enter Number of updates: ")
-	fmt.Scan(&updates)
-	for i := 0; i < updates; i++ {
-
-		var uUserName string
-		var uFieldName string
-		var uValue string
-		var updateUser UserProfile
-
-		fmt.Print("\nEnter userName To Be Updated: ")
-		fmt.Scan(&uUserName)
-		fmt.Print("\nEnter Field To Be Updated: ")
-		fmt.Scan(&uFieldName)
-		fmt.Print("\nEnter Updated Value: ")
-		fmt.Scan(&uValue)
-
-		db.Where("User = ?", uUserName).First(&updateUser).Update(uFieldName, uValue)
-		fmt.Println("\nStored Information:\nUserName: " + updateUser.User + "\nPassword: " + updateUser.Password)
-		fmt.Println("Allergies: " + updateUser.Allergies + "\nCreatedAt: " + updateUser.CreatedAt.String())
-		fmt.Println()
-	}
-}
-
-func testHardDelete(db *gorm.DB) {
-	//This function hard deletes values in the database
-	//this can be used later as a framework to build future delete functions
-
-	hardDeletes := 0
-	fmt.Print("Enter Number of HardDeletes: ")
-	fmt.Scan(&hardDeletes)
-
-	for i := 0; i < hardDeletes; i++ {
-		var hdUserName string
-		var hardDeleteUser UserProfile
-		fmt.Print("\nEnter userName of HardDelete: ")
-		fmt.Scan(&hdUserName)
-
-		db.Where("User = ?", hdUserName).First(&hardDeleteUser)
-
-		fmt.Println("\nUser Stored Information:\nUserName: " + hardDeleteUser.User + "\nPassword: " + hardDeleteUser.Password)
-		fmt.Println("Allergies: " + hardDeleteUser.Allergies + "\nCreatedAt: " + hardDeleteUser.CreatedAt.String() + "\n\nDeleting user")
-
-		db.Unscoped().Delete(&hardDeleteUser)
-
-		hardDeleteUser = UserProfile{}
-		db.Where("User = ?", hdUserName).First(&hardDeleteUser)
-
-		if hardDeleteUser.ID == 0 {
-			fmt.Println("user Was Successfully Deleted")
-		} else {
-			fmt.Println("user Was Unsuccessfully Deleted")
 		}
 	}
 }
