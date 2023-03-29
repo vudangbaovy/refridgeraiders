@@ -18,7 +18,7 @@ func testUserAdd(db *gorm.DB)(bool) {
 
 	fmt.Println("\nTest 0 -------------------------------------")
 	for  i := uint(0); i < numberOfEntries; i++ { //starts at last id so no duplicates in db accidently get deleted
-		insertedUsers[i].Name = "UATest" + strconv.FormatUint(uint64(i), 10)//creates userprofiles and adds them to db
+		insertedUsers[i].User = "UATest" + strconv.FormatUint(uint64(i), 10)//creates userprofiles and adds them to db
 		insertedUsers[i].Password = "password" + strconv.FormatUint(uint64(i), 10)
 		insertedUsers[i].Allergies = "Allergies" + strconv.FormatUint(uint64(i), 10)
 		addUser(&insertedUsers[i], db)
@@ -26,14 +26,15 @@ func testUserAdd(db *gorm.DB)(bool) {
 
 	for i := uint(0); i < numberOfEntries; i++ {
 		var searchUser UserProfile
-		err := db.Where("name = ?", "UATest" + strconv.FormatUint(uint64(i), 10)).First(&searchUser)
+		err := db.Where("User = ?", "UATest" + strconv.FormatUint(uint64(i), 10)).First(&searchUser)
 		//finds added users 
 
 		//tests that they have the same values
-		if searchUser.Name != insertedUsers[i].Name || searchUser.Password != insertedUsers[i].Password || searchUser.Allergies != insertedUsers[i].Allergies || err.Error != nil {
+		if searchUser.User != insertedUsers[i].User || searchUser.Password != insertedUsers[i].Password || searchUser.Allergies != insertedUsers[i].Allergies || err.Error != nil {
+			fmt.Println("Failed      : ", searchUser.User, " : Does Not Match ", insertedUsers[i].User)
 			for _, v := range insertedUsers {
 				result := db.Unscoped().Delete(&v)//deletes added users from db
-				fmt.Println("User Deleted: ", v.Name, " : Rows Affected : ", result.RowsAffected)
+				fmt.Println("user Deleted: ", v.User, " : Rows Affected : ", result.RowsAffected)
 			}
 			return false//failed
 		}
@@ -41,7 +42,7 @@ func testUserAdd(db *gorm.DB)(bool) {
 
 	for _, v := range insertedUsers {
 		result := db.Unscoped().Delete(&v)
-		fmt.Println("User Deleted: ", v.Name, " : Rows Affected : ", result.RowsAffected)
+		fmt.Println("user Deleted: ", v.User, " : Rows Affected : ", result.RowsAffected)
 	}
 	return true//passed
 }
@@ -51,35 +52,34 @@ func testUserSearch(db *gorm.DB)(bool) {
 
 	fmt.Println("\nTest 1 -------------------------------------")
 	var insertedUser UserProfile
-	insertedUser.Name = "USTest1"//creates userprofiles and adds them to db
+	insertedUser.User = "USTest1"//creates userprofiles and adds them to db
 	insertedUser.Password = "password1"
 	insertedUser.Allergies = "Allergies1"
 	addUser(&insertedUser, db)
 
 	var searchUser UserProfile
-	err2 := db.Where("Name = ?", "USTest1").First(&searchUser)
+	err2 := db.Where("User = ?", "USTest1").First(&searchUser)
 	//finds added user
 
 	//tests that it has the same values
 	if   err2.Error != nil{
 		result := db.Unscoped().Delete(&insertedUser)//deletes added users from db
-		fmt.Println("User Deleted: ", insertedUser.Name, " : Rows Affected : ", result.RowsAffected)
+		fmt.Println("user Deleted: ", insertedUser.User, " : Rows Affected : ", result.RowsAffected)
 		return false//failed
 	}
 
 	result := db.Unscoped().Delete(&insertedUser)
-	fmt.Println("User Deleted: ", insertedUser.Name, " : Rows Affected : ", result.RowsAffected)
+	fmt.Println("user Deleted: ", insertedUser.User, " : Rows Affected : ", result.RowsAffected)
 	return true//passed
 }
 
 //test 2
 func testUserPost()(bool) {
 
-
 	fmt.Println("\nTest 2 -------------------------------------")
 	time.Sleep(100 * time.Millisecond)
 	postBody, _ := json.Marshal(map[string]string{
-		"name": "Nick",
+		"user": "Nick",
 		"password": "Pwe2",
 		"allergies": "",
 	}) 
@@ -98,7 +98,7 @@ func testUserPost()(bool) {
 	if err != nil {
 		fmt.Printf("Read Error: %s\n", err)
 	}
-	if string(body) == "{\"name\":\"Nick\",\"password\":\"Pwe2\",\"allergies\":\"Pie\"}\n"{
+	if string(body) == "{\"user\":\"Nick\",\"password\":\"Pwe2\",\"allergies\":\"Pie\"}\n"{
 		return true
 	}
 	return false
@@ -109,7 +109,7 @@ func testNotes()(bool) {
 	fmt.Println("\nTest 3 -------------------------------------")
 
 	postBody, _ := json.Marshal(map[string]string{
-		"name": "Nick",
+		"user": "Nick",
 		"password": "Pwe2",
 		"RecipeName": "Cake",
 		"note": "",
@@ -128,7 +128,7 @@ func testNotes()(bool) {
 	if err != nil {
 		fmt.Printf("Read Error: %s\n", err)
 	}
-	if string(body) == "{\"name\":\"Nick\",\"password\":\"Pwe2\",\"recipeName\":\"Cake\",\"note\":\"Too Much Sugar\"}\n"{
+	if string(body) == "{\"user\":\"Nick\",\"password\":\"Pwe2\",\"recipeName\":\"Cake\",\"note\":\"Too Much Sugar\"}\n"{
 		return true
 	}
 	return false
@@ -137,7 +137,7 @@ func testNotes()(bool) {
 //startup Tests
 func StartUpTest() {
 	postBody, _ := json.Marshal(map[string]string{
-		"name": "Server",
+		"user": "Server",
 		"password": "Starting",
 		"allergies": "Test",
 	})
@@ -158,7 +158,7 @@ func StartUpTest() {
 		fmt.Println("Failed To Connect To server : 157")
 		return
 	} else {
-		if string(body) == "{\"name\":\"Server\",\"password\":\"Starting\",\"allergies\":\"Test\"}\n"{
+		if string(body) == "{\"user\":\"Server\",\"password\":\"Starting\",\"allergies\":\"Test\"}\n"{
 			fmt.Println("Connect To server")
 			return
 		}
@@ -169,24 +169,32 @@ func StartUpTest() {
 func JsonTest(w http.ResponseWriter, r *http.Request) {
 
 		w.Header().Set("Content-Type", "application/json")
-		var JsonFrame UserLoginJson
+		var JsonFrame AllergiesJson
 		json.NewDecoder(r.Body).Decode(&JsonFrame)
 	
-		if JsonFrame.Name == "Server" && JsonFrame.Password == "Starting" && JsonFrame.Allergies == "Test" {
+		if JsonFrame.User == "Server" && JsonFrame.Password == "Starting" && JsonFrame.Allergies == "Test" {
 			json.NewEncoder(w).Encode(&JsonFrame)
 		} else {
-			json.NewEncoder(w).Encode(&UserLoginJson{})
+			json.NewEncoder(w).Encode(&AllergiesJson{})
 		}
 }
 
-func RunTests() {
+func RunTests(dbEmpty bool) {
 
 	db := connectDB("test")
 	buildTables(db)
 
+	if dbEmpty {
+		defaultUser := UserProfile{User: "Nick", Password: "Pwe2", Allergies: "Pie"}
+		addUser(&defaultUser,db)
+		db.Model(&defaultUser).Association("UserNotes").Append(&UserNote{User: defaultUser.User, 
+			RecipeName: "Cake", Note: "Too Much Sugar"})
+		
+	}
+
 	var user UserProfile
 	db.First(&user)
-	fmt.Println("Test Username: ",user.Name)
+	fmt.Println("Test Username: ",user.User)
 	fmt.Println("Test Password: ",user.Password)
 
 	var results [4]bool
@@ -221,14 +229,14 @@ func testLoginUser(db *gorm.DB) {
 	for i := 0; i < numberOfEntries; i++ {
 		var loginName string
 		var inputPassword string
-		fmt.Print("Enter UserName To Login: ")
+		fmt.Print("Enter User To Login: ")
 		fmt.Scan(&loginName)
 		fmt.Print("Enter Password To Login: ")
 		fmt.Scan(&inputPassword)
 		validLogin, user := ValidateUser(loginName, inputPassword, db)
 
 		if validLogin {
-			fmt.Println("\nLogin Successful\nStored Information:\nUserName: " + user.Name + "\nPassword: " + user.Password)
+			fmt.Println("\nLogin Successful\nStored Information:\nUserName: " + user.User + "\nPassword: " + user.Password)
 			fmt.Println("Allergies: " + user.Allergies + "\nCreatedAt: " + user.CreatedAt.String())
 			fmt.Println()
 		} else {
@@ -247,10 +255,10 @@ func testSoftDelete(db *gorm.DB) {
 		var dUserName string
 		fmt.Print("Enter userName To Be Soft Deleted: ")
 		fmt.Scan(&dUserName)
-		db.Where("Name = ?", dUserName).First(&deleteUser)
+		db.Where("User = ?", dUserName).First(&deleteUser)
 		db.Delete(&deleteUser)
 		deleteUser = UserProfile{}
-		db.Unscoped().Where("Name = ?", dUserName).First(&deleteUser)
+		db.Unscoped().Where("User = ?", dUserName).First(&deleteUser)
 		fmt.Println("\n" + dUserName + " was soft deleted at: " + deleteUser.DeletedAt.Time.String())
 	}
 }
@@ -268,13 +276,13 @@ func testReturnSoftDelete(db *gorm.DB) {
 		fmt.Print("Enter userName To Be Returned: ")
 		fmt.Scan(&rUserName)
 
-		db.Unscoped().Where("Name = ?", rUserName).First(&returnedUser).Update("deleted_at", nil)
+		db.Unscoped().Where("User = ?", rUserName).First(&returnedUser).Update("deleted_at", nil)
 
 		returnedUser = UserProfile{}
-		db.Where("Name = ?", rUserName).First(&returnedUser)
+		db.Where("User = ?", rUserName).First(&returnedUser)
 
 		fmt.Println("\n" + rUserName + " Has been returned to the database, printing stored data: ")
-		fmt.Println("UserName: " + returnedUser.Name + "\nPassword: " + returnedUser.Password)
+		fmt.Println("User: " + returnedUser.User + "\nPassword: " + returnedUser.Password)
 		fmt.Println("Allergies: " + returnedUser.Allergies + "\nCreatedAt: " + returnedUser.CreatedAt.String())
 	}
 }
@@ -300,8 +308,8 @@ func testUpdate(db *gorm.DB) {
 		fmt.Print("\nEnter Updated Value: ")
 		fmt.Scan(&uValue)
 
-		db.Where("Name = ?", uUserName).First(&updateUser).Update(uFieldName, uValue)
-		fmt.Println("\nStored Information:\nUserName: " + updateUser.Name + "\nPassword: " + updateUser.Password)
+		db.Where("User = ?", uUserName).First(&updateUser).Update(uFieldName, uValue)
+		fmt.Println("\nStored Information:\nUserName: " + updateUser.User + "\nPassword: " + updateUser.Password)
 		fmt.Println("Allergies: " + updateUser.Allergies + "\nCreatedAt: " + updateUser.CreatedAt.String())
 		fmt.Println()
 	}
@@ -321,20 +329,20 @@ func testHardDelete(db *gorm.DB) {
 		fmt.Print("\nEnter userName of HardDelete: ")
 		fmt.Scan(&hdUserName)
 
-		db.Where("Name = ?", hdUserName).First(&hardDeleteUser)
+		db.Where("User = ?", hdUserName).First(&hardDeleteUser)
 
-		fmt.Println("\nUser Stored Information:\nUserName: " + hardDeleteUser.Name + "\nPassword: " + hardDeleteUser.Password)
-		fmt.Println("Allergies: " + hardDeleteUser.Allergies + "\nCreatedAt: " + hardDeleteUser.CreatedAt.String() + "\n\nDeleting User")
+		fmt.Println("\nUser Stored Information:\nUserName: " + hardDeleteUser.User + "\nPassword: " + hardDeleteUser.Password)
+		fmt.Println("Allergies: " + hardDeleteUser.Allergies + "\nCreatedAt: " + hardDeleteUser.CreatedAt.String() + "\n\nDeleting user")
 
 		db.Unscoped().Delete(&hardDeleteUser)
 
 		hardDeleteUser = UserProfile{}
-		db.Where("Name = ?", hdUserName).First(&hardDeleteUser)
+		db.Where("User = ?", hdUserName).First(&hardDeleteUser)
 
 		if hardDeleteUser.ID == 0 {
-			fmt.Println("User Was Successfully Deleted")
+			fmt.Println("user Was Successfully Deleted")
 		} else {
-			fmt.Println("User Was Unsuccessfully Deleted")
+			fmt.Println("user Was Unsuccessfully Deleted")
 		}
 	}
 }

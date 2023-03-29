@@ -12,12 +12,8 @@ export class HomeComponent {
   searchterm: string = '';
   data: any;
 
-  constructor(private apiService: ApiService) { }
-  
-
-  
+  constructor(private apiService: ApiService) { }  
     public fetchData(){
-
       this.apiService.getData(this.searchterm)
       .subscribe((data) => {
         this.data = data;
