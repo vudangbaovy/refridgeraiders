@@ -12,7 +12,7 @@ func login(w http.ResponseWriter, r *http.Request) {
   
 
 	// get username and password from input
-	 password string 
+	password string
 	username := "temp user"
 	
 	// get the hashed password from the database using the username 

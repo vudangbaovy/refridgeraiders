@@ -1,5 +1,5 @@
 describe('Login Test', () => {
-  it('Visits the Kitchen Sink', () => {
+  it('link navigation', () => {
     cy.visit('http://localhost:4200/')
     cy.contains('Login').click()
     cy.url().should('include', '/login')
