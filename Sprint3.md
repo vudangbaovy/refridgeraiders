@@ -7,14 +7,19 @@
  <h3><p>Tests:</p></h3>
    <p>1. Cypress test for the redirect links available on the site. The test clicks through the Login button, then the "First time at KitchenRescue?" link, then checks that it's at the register page.</p>
    <p>2. Cypress test to input "beef" as a parameter in the search bar and returns the correct recipes from the API.</p>
-<h2>Backend API</h2>
-<h3><p>Whats changed:</p></h3>
+<h2>Backend</h2>
+<h3><p>What's changed:</p></h3>
 <p>1. "name" has been changed to "user" in all calls to differentiate bettween username and fist/last names.</p>
-<p>2. /user/register now takes different parameters, no longer takes allergies, only first and last name(not required)</p>
-<p>3. /user has two more calls, POST and PUT</p>
-<p>4. Two new calls, /note and /note/create</p>
-<p>5. Passwords are now hashed, and stored as such into the database for user account security</p>
-<p>6. User authentication using sessions</p>
+<p>2. /user/register now takes different parameters, allergies was replaced with first and last name (first and last name not required)</p>
+<p>3. /user method post has been changed</p>
+<p>4. /user has two new methods Put, Delete</p>
+<p>5. Two new calls, /note with methods Post, Put, Delete and /note/create with method Post</p>
+<p>6. /allergies now has new method Put</p>
+<p>7. Passwords are now hashed, and stored as such into the database for user account security</p>
+<p>8. User authentication using sessions</p>
+<br>
+<br>
+<h2>Backend API</h2>
 <br>
 <h3>Localhost:3000/allergies </h3>
 <p>The /allergies calls need a JSON with the following: "name", "password" and "allergies".</p>
@@ -145,7 +150,7 @@ sends an empty json of same format if unsuccessful (will eventually be changed t
 <p>&emsp;   "note": "TOO MUCH CHEESE",</h6></p>
 <br>
 
-  <h2>Backend Unit Tests</h2>
+<h2>Backend Unit Tests</h2>
 <br>
 <h3>User Search DB Test</h3>
 <p>A Test User is added to the database and then is seached for inside the databse. The user is hard deleted after the test.</p>
