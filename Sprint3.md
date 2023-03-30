@@ -4,6 +4,8 @@
 <p>2. /user/register now takes different parameters, no longer takes allergies, only first and last name(not required)</p>
 <p>3. /user has two more calls, POST and PUT</p>
 <p>4. Two new calls, /note and /note/create</p>
+<p>5. Passwords are now hashed, and stored as such into the database for user account security
+<p>6. User authentication using sessions
 <p><h4>
 <br>
 <h3>Localhost:3000/allergies <h3>
@@ -156,3 +158,8 @@ to get a user's note from the database and then he test then compares it against
  <h3>Server Test Api<h3>
 <h4>This test is relatively simple, all it does is test if the server is can read json files through the router,</p>
 but its run every time the server starts.<h4></p>
+   <h3> Correct Password Testing</h3>
+ <h4> This test tests the password functions, which include hashing the passwords and comparing the real password with the hashed one. This test compares
+   the correct password, that was previously declared and hashed, and compared with the stored hash password.
+   <h3>Incorrect Password Testing</h3>
+ <h4> Similar to the one above, this test hashes a password given and then is then compared with a different (wrong) password. 
