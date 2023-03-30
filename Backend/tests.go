@@ -311,6 +311,39 @@ func incorrectPassTest(t *testing.T) bool {
 	return !checking
 }
 
+func TestUserDelete() bool {
+
+	client := &http.Client{}
+
+	db := connectDB("test")
+	var count1 int64
+	var count2 int64
+	db.Where("user = ?", "Nick").Find(&UserProfile{}).Count(&count1)
+
+	//first message
+	postBody, _ := json.Marshal(map[string]string{
+		"user":     "Nick",
+		"password": "Pwe2",
+	})
+
+	//sends message
+	req, err := http.NewRequest(http.MethodDelete, "http://localhost:3000/user", bytes.NewBuffer(postBody))
+	if err != nil {
+		fmt.Printf("Request Error: %s\n", err)
+		return false
+	}
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+	_, err = client.Do(req)
+	if err != nil {
+		fmt.Printf("Request Error: %s\n", err)
+		return false
+	}
+
+	//checks
+	db.Where("user = ?", "Nick").Find(&UserProfile{}).Count(&count2)
+	return count1 == (count2 + 1)
+}
+
 // func correctPassDB(t *testing.T) bool {
 // return
 // }
@@ -333,11 +366,11 @@ func RunUnitTests(dbEmpty bool) {
 	fmt.Println("Test Username: ", user.User)
 	fmt.Println("Test Password: ", user.Password)
 
-	var results [7]bool
+	var results [9]bool
 
 	fmt.Println("Running hash password tests")
-	results[5] = correctPassTest(&testing.T{})
-	results[6] = incorrectPassTest(&testing.T{})
+	results[6] = correctPassTest(&testing.T{})
+	results[7] = incorrectPassTest(&testing.T{})
 
 	fmt.Println("\nRunning DB Tests...")
 	results[0] = testDBAdd(db)
@@ -349,7 +382,9 @@ func RunUnitTests(dbEmpty bool) {
 
 	results[2] = testAllergiesPost()
 	results[3] = testNotesPOST()
+	results[5] = testUserPOST()
 	results[4] = testUserPUT()
+	results[8] = TestUserDelete()
 	fmt.Println("\nTest Results: ")
 
 	for i, v := range results {
