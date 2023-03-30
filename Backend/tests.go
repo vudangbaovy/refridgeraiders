@@ -311,16 +311,17 @@ func incorrectPassTest(t *testing.T) bool {
 	return !checking
 }
 
-func correctPassDB(t *testing.T) bool {
-
-}
+// func correctPassDB(t *testing.T) bool {
+// return
+// }
 func RunUnitTests(dbEmpty bool) {
 	//bool parameter is for if the db is empty so a default entry can be added
 	db := connectDB("test")
 	buildTables(db)
 
 	if dbEmpty {
-		defaultUser := UserProfile{User: "Nick", Password: "Pwe2", FirstN: "Nicholas", LastN: "Callahan", Allergies: "Pie"}
+		hashpass, _ := hashedPass("Pwe2")
+		defaultUser := UserProfile{User: "Nick", Password: hashpass, FirstN: "Nicholas", LastN: "Callahan", Allergies: "Pie"}
 		addUser(&defaultUser, db)
 		db.Model(&defaultUser).Association("UserNotes").Append(&UserNote{User: defaultUser.User,
 			RecipeName: "Cake", Note: "Too Much Sugar"})
@@ -348,7 +349,7 @@ func RunUnitTests(dbEmpty bool) {
 
 	results[2] = testAllergiesPost()
 	results[3] = testNotesPOST()
-	results[4] = testUserPOST()
+	results[4] = testUserPUT()
 	fmt.Println("\nTest Results: ")
 
 	for i, v := range results {

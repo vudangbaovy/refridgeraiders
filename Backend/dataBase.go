@@ -126,7 +126,7 @@ func AllergiesPost(w http.ResponseWriter, r *http.Request) {
 
 	valid, user := ValidateUser(ARJ.User, ARJ.Password, connectDB("test"))
 	if valid {
-		ARJ = AllergiesJson{User: user.User, Password: user.Password, Allergies: user.Allergies}
+		ARJ = AllergiesJson{User: user.User, Password: ARJ.Password, Allergies: user.Allergies}
 		json.NewEncoder(w).Encode(&ARJ)
 	} else {
 		json.NewEncoder(w).Encode(&AllergiesJson{})
@@ -184,15 +184,9 @@ func ValidateUser(inputUserName string, inputPassword string, db *gorm.DB) (bool
 	//returns false and empty struct if unsuccessful
 	var user UserProfile
 
-	// change the password to be hashed
-	hash, err0 := hashedPass(inputPassword)
-	if err0 != nil {
-		fmt.Println("password unable to be hashed")
-	}
-
 	//fmt.Println("User Login  : Username:", inputUserName, " Password:", inputPassword)
 	err := db.Where("User = ?", inputUserName).First(&user)
-	if err.Error != nil || user.Password != hash {
+	if err.Error != nil || !compareHash(inputPassword, user.Password) {
 		fmt.Println("Login Attempt Failed")
 		return false, nil
 	}
