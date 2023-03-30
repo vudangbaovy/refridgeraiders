@@ -1,9 +1,7 @@
 package main
 
 import (
-	"fmt"
 	"log"
-	"testing"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -30,6 +28,8 @@ func compareHash(password string, hash string) bool {
 	return true
 }
 
+/*
+
 // testing
 func correctPassTest(t *testing.T) {
 	// should return true as correct pass is given
@@ -55,3 +55,4 @@ func incorrectPassTest(t *testing.T) {
 	checking := compareHash(pass2, hash)
 	fmt.Println("Passwords Match: ", checking)
 }
+*/
