@@ -10,8 +10,8 @@ import { User } from './user';
 })
 
 export class DataService {
-  private registerUrl = 'http://localhost:3000/User/Register'
-  private loginUrl = 'http://localhost:3000/User';
+  private registerUrl = 'http://localhost:3000/user/register'
+  private loginUrl = 'http://localhost:3000/user';
 
   isLoggedIn: boolean = false;
   isRegistered: boolean = false;

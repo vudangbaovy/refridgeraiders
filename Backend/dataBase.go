@@ -73,13 +73,13 @@ func UserRegisterPost(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	var newUserJson LoginJson
+	json.NewDecoder(r.Body).Decode(&newUserJson)
+
 	// change the password to be hashed
 	hash, err := hashedPass(newUserJson.Password)
 	if err != nil {
 		fmt.Println("password unable to be hashed")
 	}
-
-	json.NewDecoder(r.Body).Decode(&newUserJson)
 
 	user := UserProfile{User: newUserJson.User, Password: hash,
 		FirstN: newUserJson.FirstN, LastN: newUserJson.LastN, Allergies: ""}
@@ -172,7 +172,7 @@ func addUser(addUser *UserProfile, db *gorm.DB) (bool, *UserProfile) {
 	err := db.Limit(1).Find("User = ?", addUser.User).First(&searchUser)
 
 	if err.Error != nil {
-		result := db.Omit("UserNote").Create(&addUser)
+		result := db.Create(&addUser)
 		fmt.Println("User Added  : ", addUser.User, " : Rows effected : ", result.RowsAffected)
 		return true, addUser
 	}

@@ -12,7 +12,8 @@ use command "go run ." while in the backend directory for the go files to run
 */
 
 func main() {
-	if true {
+	buildTables(connectDB("test"))
+	if false {
 		RunUnitTests(true)
 	} else {
 		host := "localhost:3000"
