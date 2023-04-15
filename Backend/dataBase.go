@@ -9,7 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
+	"strings"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -18,6 +18,7 @@ import (
 type UserProfile struct {
 	gorm.Model
 	UserNotes []UserNote `gorm:"foreignKey:UserRef"`
+	UserBookMarks string
 	User      string
 	FirstN    string
 	LastN     string
@@ -54,6 +55,12 @@ type UserNote struct {
 	Note       string
 }
 
+type BookMarkJson struct {
+	User     string `json:"user"`
+	Password string `json:"password"`
+	UserBookMarks string `json:"bookMarks"`
+}
+
 // sets up Sqlite3 database
 func connectDB(dbName string) *gorm.DB {
 	dbName += ".db"
@@ -82,7 +89,7 @@ func UserRegisterPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := UserProfile{User: newUserJson.User, Password: hash,
-		FirstN: newUserJson.FirstN, LastN: newUserJson.LastN, Allergies: ""}
+		FirstN: newUserJson.FirstN, LastN: newUserJson.LastN, Allergies: "", UserBookMarks: ""}
 	addUser(&user, connectDB("test"))
 	json.NewEncoder(w).Encode(newUserJson)
 }
@@ -294,4 +301,75 @@ func NoteDelete(w http.ResponseWriter, r *http.Request) {
 	} else {
 		json.NewEncoder(w).Encode(&UserNoteJson{})
 	}
+}
+
+func BookmarkPost(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var BMJson BookMarkJson
+	json.NewDecoder(r.Body).Decode(&BMJson)
+
+	db := connectDB("test")
+	valid, user := ValidateUser(BMJson.User, BMJson.Password, db)
+
+	if valid {
+		BMJson.UserBookMarks = user.UserBookMarks
+		json.NewEncoder(w).Encode(&BMJson)
+	} else {
+		json.NewEncoder(w).Encode(&BookMarkJson{})
+	}
+}
+
+func BookmarkPut(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var BMJson BookMarkJson
+	json.NewDecoder(r.Body).Decode(&BMJson)
+
+	db := connectDB("test")
+	valid, user := ValidateUser(BMJson.User, BMJson.Password, db)
+
+	if valid {
+		exists, _ := BookmarkStrHelper(user.UserBookMarks, BMJson.UserBookMarks)
+		if ! exists{
+			newBookMarks := user.UserBookMarks + "," + BMJson.UserBookMarks
+			db.Model(&user).Update("UserBookMarks", newBookMarks)
+			json.NewEncoder(w).Encode(&BMJson)
+		}
+	} else {
+		json.NewEncoder(w).Encode(&BookMarkJson{})
+	}
+}
+
+func BookmarkDelete(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var BMJson BookMarkJson
+	json.NewDecoder(r.Body).Decode(&BMJson)
+
+	db := connectDB("test")
+	valid, user := ValidateUser(BMJson.User, BMJson.Password, db)
+
+	if valid {
+		exists, index := BookmarkStrHelper(user.UserBookMarks, BMJson.UserBookMarks)
+		if exists {
+			newBookMarks := user.UserBookMarks[:index-1] + user.UserBookMarks[index+len(BMJson.UserBookMarks):]
+			db.Model(&user).Update("UserBookMarks", newBookMarks)
+			json.NewEncoder(w).Encode(&BMJson)
+		} else {
+			json.NewEncoder(w).Encode(&BookMarkJson{})
+		}
+	} else {
+		json.NewEncoder(w).Encode(&BookMarkJson{})
+	}
+}
+
+func BookmarkStrHelper (uBM string, jBM string)(bool,int) {
+	if !strings.Contains(uBM, jBM) {
+		return false, 0
+	} else {
+		i := strings.Index(uBM, jBM)
+		if uBM[i-1] != ',' || (len(uBM) != i+len(jBM)) && (uBM[i+len(jBM)] != ',') {
+			exists, index := BookmarkStrHelper(uBM[i+len(jBM):], jBM)
+			return exists, index+i+len(jBM)-1
+	}
+		return true, i
+}
 }

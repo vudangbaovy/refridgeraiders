@@ -28,6 +28,10 @@ func httpHandler() http.Handler {
 	router.HandleFunc("/note", NotePut).Methods("PUT")
 	router.HandleFunc("/note", NoteDelete).Methods("DELETE")
 
+	router.HandleFunc("/bookmark", BookmarkPost).Methods("POST")
+	router.HandleFunc("/bookmark", BookmarkPut).Methods("PUT")
+	router.HandleFunc("/bookmark", BookmarkDelete).Methods("DELETE")
+
 	//start up tests
 	router.HandleFunc("/servertest", JsonTest).Methods("POST")
 
