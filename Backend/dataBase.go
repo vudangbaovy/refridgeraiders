@@ -132,6 +132,7 @@ func AllergiesPost(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&ARJ)
 
 	valid, user := ValidateUser(ARJ.User, ARJ.Password, connectDB("test"))
+
 	if valid {
 		ARJ = AllergiesJson{User: user.User, Password: ARJ.Password, Allergies: user.Allergies}
 		json.NewEncoder(w).Encode(&ARJ)
@@ -149,8 +150,34 @@ func AllergiesPut(w http.ResponseWriter, r *http.Request) {
 	db := connectDB("test")
 	valid, user := ValidateUser(AEJ.User, AEJ.Password, db)
 	if valid {
-		db.Model(&user).Update("Allergies", AEJ.Allergies)
-		json.NewEncoder(w).Encode(&AEJ)
+		exists, _ := StrHelper(user.Allergies, AEJ.Allergies)
+		if !exists{
+			newAllergies := user.Allergies + "," + AEJ.Allergies
+			db.Model(&user).Update("Allergies", newAllergies)
+			json.NewEncoder(w).Encode(&AEJ)
+		}
+	} else {
+		json.NewEncoder(w).Encode(&AllergiesJson{})
+	}
+}
+
+func AllergiesDelete(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var AEJ AllergiesJson
+	json.NewDecoder(r.Body).Decode(&AEJ)
+
+	db := connectDB("test")
+	valid, user := ValidateUser(AEJ.User, AEJ.Password, db)
+
+	if valid {
+		exists, index := StrHelper(user.Allergies, AEJ.Allergies)
+		if exists {
+			newAllergies := user.Allergies[:index-1] + user.UserBookMarks[index+len(AEJ.Allergies):]
+			db.Model(&user).Update("Allergies", newAllergies)
+			json.NewEncoder(w).Encode(&AEJ)
+		} else {
+			json.NewEncoder(w).Encode(&AllergiesJson{})
+		}
 	} else {
 		json.NewEncoder(w).Encode(&AllergiesJson{})
 	}
@@ -328,7 +355,7 @@ func BookmarkPut(w http.ResponseWriter, r *http.Request) {
 	valid, user := ValidateUser(BMJson.User, BMJson.Password, db)
 
 	if valid {
-		exists, _ := BookmarkStrHelper(user.UserBookMarks, BMJson.UserBookMarks)
+		exists, _ := StrHelper(user.UserBookMarks, BMJson.UserBookMarks)
 		if ! exists{
 			newBookMarks := user.UserBookMarks + "," + BMJson.UserBookMarks
 			db.Model(&user).Update("UserBookMarks", newBookMarks)
@@ -348,7 +375,7 @@ func BookmarkDelete(w http.ResponseWriter, r *http.Request) {
 	valid, user := ValidateUser(BMJson.User, BMJson.Password, db)
 
 	if valid {
-		exists, index := BookmarkStrHelper(user.UserBookMarks, BMJson.UserBookMarks)
+		exists, index := StrHelper(user.UserBookMarks, BMJson.UserBookMarks)
 		if exists {
 			newBookMarks := user.UserBookMarks[:index-1] + user.UserBookMarks[index+len(BMJson.UserBookMarks):]
 			db.Model(&user).Update("UserBookMarks", newBookMarks)
@@ -361,13 +388,13 @@ func BookmarkDelete(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func BookmarkStrHelper (uBM string, jBM string)(bool,int) {
+func StrHelper (uBM string, jBM string)(bool,int) {
 	if !strings.Contains(uBM, jBM) {
 		return false, 0
 	} else {
 		i := strings.Index(uBM, jBM)
 		if uBM[i-1] != ',' || (len(uBM) != i+len(jBM)) && (uBM[i+len(jBM)] != ',') {
-			exists, index := BookmarkStrHelper(uBM[i+len(jBM):], jBM)
+			exists, index := StrHelper(uBM[i+len(jBM):], jBM)
 			return exists, index+i+len(jBM)-1
 	}
 		return true, i

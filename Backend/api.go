@@ -17,6 +17,7 @@ func httpHandler() http.Handler {
 	//allergies update or get allergy data
 	router.HandleFunc("/allergies", AllergiesPost).Methods("POST")
 	router.HandleFunc("/allergies", AllergiesPut).Methods("PUT")
+	router.HandleFunc("/allergies", AllergiesDelete).Methods("DELETE")
 	//user is user management in db
 	router.HandleFunc("/user/register", UserRegisterPost).Methods("POST")
 	router.HandleFunc("/user", UserPOST).Methods("POST")
