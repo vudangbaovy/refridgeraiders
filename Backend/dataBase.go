@@ -58,7 +58,7 @@ type UserNote struct {
 type BookMarkJson struct {
 	User     string `json:"user"`
 	Password string `json:"password"`
-	UserBookMarks string `json:"bookMarks"`
+	UserBookMarks string `json:"bookmarks"`
 }
 
 // sets up Sqlite3 database
@@ -186,7 +186,7 @@ func AllergiesDelete(w http.ResponseWriter, r *http.Request) {
 func UserDelete(w http.ResponseWriter, r *http.Request) {
 	//deletes a user from the db
 	w.Header().Set("Content-Type", "application/json")
-	var deleteJson AllergiesJson
+	var deleteJson LoginJson
 	json.NewDecoder(r.Body).Decode(&deleteJson)
 
 	db := connectDB("test")
