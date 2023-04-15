@@ -172,7 +172,7 @@ func AllergiesDelete(w http.ResponseWriter, r *http.Request) {
 	if valid {
 		exists, index := StrHelper(user.Allergies, AEJ.Allergies)
 		if exists {
-			newAllergies := user.Allergies[:index-1] + user.UserBookMarks[index+len(AEJ.Allergies):]
+			newAllergies := user.Allergies[:index-1] + user.Allergies[index+len(AEJ.Allergies):]
 			db.Model(&user).Update("Allergies", newAllergies)
 			json.NewEncoder(w).Encode(&AEJ)
 		} else {
