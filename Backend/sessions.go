@@ -9,6 +9,11 @@ import (
 	"github.com/gorilla/sessions"
 )
 
+type userLogin struct {
+	User     string `json:"user"`
+	Password string `json:"password"`
+}
+
 func cookieStore() *sessions.CookieStore {
 	cookieStore := sessions.NewCookieStore([]byte("secret-session-key"))
 	return cookieStore
@@ -16,12 +21,15 @@ func cookieStore() *sessions.CookieStore {
 
 func login(w http.ResponseWriter, r *http.Request) {
 
-	username := r.PostFormValue("user")
-	pass := r.PostFormValue("password")
+	//username := r.PostFormValue("user")
+	//pass := r.PostFormValue("password")
+
+	var newUserJson userLogin
+	json.NewDecoder(r.Body).Decode(&newUserJson)
 
 	// authenticate the user
-	checking, user := ValidateUser(username, pass, connectDB("test"))
-	if checking == false {
+	checking, user := ValidateUser(newUserJson.User, newUserJson.Password, connectDB("test"))
+	if !checking {
 		fmt.Print("Incorrect credentials")
 		return
 	}
@@ -30,7 +38,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Print(err)
 	}
-	session.Values["user"] = username
+	session.Values["user"] = newUserJson.User
 	session.Values["authenticated"] = true
 	// saves session to the cookie store
 	err = session.Save(r, w)
@@ -71,6 +79,7 @@ func logout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	session.Values["user"] = ""
 	session.Values["authenticated"] = false
 	delete(session.Values, "user")
 	err = session.Save(r, w)
