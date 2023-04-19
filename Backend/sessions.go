@@ -48,12 +48,13 @@ func AuthenticatedStat(w http.ResponseWriter, r *http.Request) {
 	}
 
 	auth := session.Values["authenticated"]
+	user := session.Values["user"].(string)
 	if auth == true {
 		w.WriteHeader(http.StatusOK)
-		return
+		return true, user
 	} else {
 		w.WriteHeader(http.StatusBadRequest)
-		return
+		return false, ""
 	}
 
 }
