@@ -29,7 +29,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-
+	session.Values["user"] = username
 	session.Values["authenticated"] = true
 	// saves session to the cookie store
 	err = session.Save(r, w)
@@ -41,7 +41,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
-func AuthenticatedStat(w http.ResponseWriter, r *http.Request) {
+func AuthenticatedStat(w http.ResponseWriter, r *http.Request) (bool, string) {
 	session, err := cookieStore().Get(r, "Cookie Name")
 	if err != nil {
 		log.Fatalln(err)
