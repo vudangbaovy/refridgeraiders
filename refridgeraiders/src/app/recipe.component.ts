@@ -23,4 +23,20 @@ export class RecipeComponent implements OnInit{
     this.selectedRecipeData = this.recipeService.selectedRecipeData;
     console.log(this.selectedRecipeData);
   }
+   sendStringToBackend(data: string) {
+    const url = 'http://localhost:3000/bookmark';
+    return this.http.post(url, { data });
+  }
+  
+  updateStringInBackend(data: string) {
+    const url = `http://localhost:3000/bookmark/${data}`;
+    return this.http.put(url, { data });
+  }
+  
+  deleteStringFromBackend(data: string) {
+    const url = `http://localhost:3000/bookmark/${data}`;
+    return this.http.delete(url);
+  }
+  
+  
 }
