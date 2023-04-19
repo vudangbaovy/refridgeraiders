@@ -9,10 +9,10 @@ import { Router } from '@angular/router';
 })
 export class RegisterComponent implements OnInit {
   registerUserData = {
-    firstN: "",
-    lastN: "",
     user: "",
-    password: ""
+    password: "",
+    firstN: "",
+    lastN: ""
   }
   constructor(private dataService: DataService, private router: Router) { }
   ngOnInit() {

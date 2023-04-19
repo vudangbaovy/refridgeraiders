@@ -14,7 +14,9 @@ export class LoginComponent implements OnInit {
   invalid = false;
   loginUserData = {
     user: "",
-    password: ""
+    password: "",
+    firstN: "",
+    lastN: ""
   }
   constructor(
     private dataService: DataService,
