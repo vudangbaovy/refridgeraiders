@@ -13,9 +13,8 @@ export class LoginComponent implements OnInit {
   submitted = false;
   invalid = false;
   loginUserData = {
-    name: "",
-    password: "",
-    allergies: ""
+    user: "",
+    password: ""
   }
   constructor(
     private dataService: DataService,

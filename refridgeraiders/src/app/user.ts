@@ -1,5 +1,7 @@
 export interface User {
-    name: string;
+    firstN: string;
+    lastN: string;
+    user: string;
     password: string;
     allergies: string;
 }

@@ -12,6 +12,7 @@ import { User } from './user';
 export class DataService {
   private registerUrl = 'http://localhost:3000/user/register'
   private loginUrl = 'http://localhost:3000/user';
+  private getUserUrl = 'http://localhost:3000/login';
 
   isLoggedIn: boolean = false;
   isRegistered: boolean = false;
@@ -22,7 +23,7 @@ export class DataService {
     private router: Router
     ) { }
 
-  registerUser(user: User) {
+  registerUser(user: any) {
     return this.http.post<any>(this.registerUrl, user).pipe(map((response: any) => {
       // do whatever with your response
       this.isRegistered = true;
@@ -36,7 +37,7 @@ export class DataService {
   // loginUser(user: User) {
   //   return this.http.post<any>(this.loginUrl, user)
   // }
-  loginUser(user: User): Observable<any> {
+  loginUser(user: any): Observable<any> {
     return this.http.post(this.loginUrl, user).pipe(map((response: any) => {
       // do whatever with your response
       if (response.status === 200) {
@@ -59,6 +60,6 @@ export class DataService {
   }
 
   getUser() {
-    return this.http.get<any>(this.loginUrl);
+    return this.http.post(this.getUserUrl, {token: localStorage.getItem('token')});
   }
 }
