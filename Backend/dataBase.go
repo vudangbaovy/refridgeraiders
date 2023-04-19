@@ -93,7 +93,7 @@ func UserRegisterPost(w http.ResponseWriter, r *http.Request) {
 	user := UserProfile{User: newUserJson.User, Password: hash,
 		FirstN: newUserJson.FirstN, LastN: newUserJson.LastN, Allergies: "", UserBookMarks: ""}
 	addUser(&user, connectDB("test"))
-	ValidateUserSessions(w, r, newUserJson.User, newUserJson.Password, connectDB("test"))
+	//ValidateUserSessions(w, r, newUserJson.User, newUserJson.Password, connectDB("test"))
 	json.NewEncoder(w).Encode(newUserJson)
 }
 
@@ -253,6 +253,9 @@ func ValidateUserSessions(w http.ResponseWriter, r *http.Request, inputUserName 
 	err2 := db.Where("User = ?", inputUserName).First(&user)
 	if err2.Error != nil || !compareHash(inputPassword, user.Password) {
 		fmt.Println("Login Attempt Failed")
+		session.Values["authenticated"] = false
+		delete(session.Values, "user")
+		session.Save(r, w)
 		return false, nil
 	}
 
