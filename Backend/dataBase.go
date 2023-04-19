@@ -109,7 +109,7 @@ func UserPOST(w http.ResponseWriter, r *http.Request) {
 		LUS.LastN = user.LastN
 		json.NewEncoder(w).Encode(&LUS)
 	} else {
-		json.NewEncoder(w).Encode(&LoginJson{})
+		w.WriteHeader(201)
 	}
 }
 
