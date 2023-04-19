@@ -15,6 +15,7 @@ export class DataService {
 
   isLoggedIn: boolean = false;
   isRegistered: boolean = false;
+  faultyLogin: boolean = false;
   public redirectUrl: string = '/';
   constructor(
     private http: HttpClient,
@@ -38,10 +39,16 @@ export class DataService {
   loginUser(user: User): Observable<any> {
     return this.http.post(this.loginUrl, user).pipe(map((response: any) => {
       // do whatever with your response
-      this.isLoggedIn = true;
-      if (this.redirectUrl) {
-        this.router.navigate([this.redirectUrl]);
-        this.redirectUrl = '/';
+      if (response.status === 200) {
+        this.isLoggedIn = true;
+        if (this.redirectUrl) {
+          this.router.navigate([this.redirectUrl]);
+          this.redirectUrl = '/';
+        }
+      }
+      else {
+        this.isLoggedIn = false;
+        this.faultyLogin = true;
       }
     }));
   }

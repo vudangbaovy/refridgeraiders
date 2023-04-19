@@ -18,6 +18,7 @@
                 id="inputPassword4">
                 <div *ngIf="submitted && f.password.errors" class="invalid-feedback"></div>
               </mat-form-field>
+              <div *ngIf="invalid" class="invalid-feedback">Invalid username or password</div>
               <button (click)="loginUser()" type="submit">Log In</button>
           </form>
           <p class="hyperlink" (click)="redirect()">First time at KitchenRescue?</p>

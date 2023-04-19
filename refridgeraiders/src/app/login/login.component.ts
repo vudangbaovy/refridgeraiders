@@ -11,6 +11,7 @@ import { FormBuilder, FormGroup, Validators, FormControlState } from '@angular/f
 export class LoginComponent implements OnInit {
   registerForm:any = FormGroup;
   submitted = false;
+  invalid = false;
   loginUserData = {
     name: "",
     password: "",
@@ -34,6 +35,9 @@ export class LoginComponent implements OnInit {
     if (this.submitted) {
       this.redirect();
     }
+    if(this.dataService.faultyLogin == true) {
+      alert("Invalid username or password");
+    }
   }
   ngOnInit() {
     this.registerForm = this.formBuilder.group({
@@ -48,6 +52,9 @@ export class LoginComponent implements OnInit {
         res => console.log(res),
         err => console.log(err)
       )
+      if(this.dataService.faultyLogin == true) {
+        this.invalid = true;
+      }
   }
   redirect() {
     this.router.navigate(['/register']);
