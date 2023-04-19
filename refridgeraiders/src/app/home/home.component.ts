@@ -1,6 +1,7 @@
 import { Component, Injectable } from '@angular/core';
 import { ApiService } from './api.service';
-
+import { Router } from '@angular/router';
+import { RecipeService } from '../shared/recipe.service';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -12,8 +13,16 @@ export class HomeComponent {
   searchterm: string = '';
   data: any;
 
-  constructor(private apiService: ApiService) { }  
+  constructor(private apiService: ApiService, private router: Router, private recipeService: RecipeService) { }
+
+  navigateToNewComponent(recipeIndex: number): void{
+    this.recipeService.selectedRecipeIndex = recipeIndex;
+    this.recipeService.selectedRecipeData = this.data.hits[recipeIndex];
+    this.router.navigate(['/recipe']);
+  }
+  
     public fetchData(){
+
       this.apiService.getData(this.searchterm)
       .subscribe((data) => {
         this.data = data;
