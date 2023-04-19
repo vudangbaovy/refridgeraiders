@@ -5,7 +5,7 @@ import { HomeComponent } from './home/home.component';
 import { CommonModule } from '@angular/common';
 import { RegisterComponent } from './register/register.component';
 import { ProfileComponent } from './profile/profile.component';
-import { RecipeComponent } from './recipe/recipe.component';
+import { RecipeComponent } from './recipe.component';
 
 const routes: Routes = [ 
     { path: '', component: HomeComponent },
