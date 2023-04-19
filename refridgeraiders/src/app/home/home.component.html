@@ -6,49 +6,49 @@
     <button type="submit" (click)="fetchData()"><img src="../assets/search.png"></button>
   </form>
 </div>
- <div *ngIf="data">
-    <p class="line-2 anim-typewriter2" fxLayoutAlign="center">Here is a list of meals that have {{data.q}}...</p>
+<div *ngIf="data">
+    <p class="line-2 anim-typewriter2">Here is a list of meals that have {{data.q}}...</p>
     <div class="shopping-list-container">
       <h1>Shopping List</h1>
       <div class="shopping-list">
         <div class="shopping-list-item">
-          <input type="checkbox" id="item-1">
+          <input type="checkbox" id="item-1" (click)="navigateToNewComponent(0)">
           <label for="item-1">{{data.hits[0].recipe.label}}</label>
         </div>
         <div class="shopping-list-item">
-          <input type="checkbox" id="item-2">
+          <input type="checkbox" id="item-2" (click)="navigateToNewComponent(1)">
           <label for="item-2">{{data.hits[1].recipe.label}}</label>
         </div>
         <div class="shopping-list-item">
-          <input type="checkbox" id="item-3">
+          <input type="checkbox" id="item-3" (click)="navigateToNewComponent(2)">
           <label for="item-3">{{data.hits[2].recipe.label}}</label>
         </div>
         <div class="shopping-list-item">
-          <input type="checkbox" id="item-4">
+          <input type="checkbox" id="item-4" (click)="navigateToNewComponent(3)">
           <label for="item-4">{{data.hits[3].recipe.label}}</label>
         </div>
         <div class="shopping-list-item">
-          <input type="checkbox" id="item-5">
+          <input type="checkbox" id="item-5" (click)="navigateToNewComponent(4)">
           <label for="item-5">{{data.hits[4].recipe.label}}</label>
         </div>
         <div class="shopping-list-item">
-          <input type="checkbox" id="item-6">
+          <input type="checkbox" id="item-6" (click)="navigateToNewComponent(5)">
           <label for="item-6">{{data.hits[5].recipe.label}}</label>
         </div>
         <div class="shopping-list-item">
-          <input type="checkbox" id="item-7">
+          <input type="checkbox" id="item-7" (click)="navigateToNewComponent(6)">
           <label for="item-7">{{data.hits[6].recipe.label}}</label>
         </div>
         <div class="shopping-list-item">
-          <input type="checkbox" id="item-8">
+          <input type="checkbox" id="item-8" (click)="navigateToNewComponent(7)">
           <label for="item-8">{{data.hits[7].recipe.label}}</label>
         </div>
         <div class="shopping-list-item">
-          <input type="checkbox" id="item-9">
+          <input type="checkbox" id="item-9" (click)="navigateToNewComponent(8)">
           <label for="item-9">{{data.hits[8].recipe.label}}</label>
         </div>
         <div class="shopping-list-item">
-          <input type="checkbox" id="item-10">
+          <input type="checkbox" id="item-10" (click)="navigateToNewComponent(9)">
           <label for="item-10">{{data.hits[9].recipe.label}}</label>
         </div>
       </div>

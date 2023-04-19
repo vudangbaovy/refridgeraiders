@@ -1,8 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { HttpClientTestingModule } from "@angular/common/http/testing";
-
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -15,9 +14,13 @@ export class ApiService {
 
   constructor(private http: HttpClient) { }
 
+  public dataEmitter = new EventEmitter<any>();
+
   getData(input: string): Observable<any> {
     const url = `https://api.edamam.com/search?q=${input}&app_id=${this.app_id}&app_key=${this.app_key}`;
-    return this.http.get<any>(url);
+    return this.http.get<any>(url).pipe(
+      tap(data => this.dataEmitter.emit(data))
+    );
   }
 
 }
