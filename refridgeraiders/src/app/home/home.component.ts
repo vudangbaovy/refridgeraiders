@@ -1,7 +1,7 @@
 import { Component, Injectable } from '@angular/core';
 import { ApiService } from './api.service';
 import { Router } from '@angular/router';
-import { RecipeService } from '../shared/recipe.service';
+import { RecipeService } from '../recipe.service';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
