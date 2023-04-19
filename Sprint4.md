@@ -6,7 +6,21 @@
 <p>&emsp;   "password": "pass",</p>
 <h4><p>Returns:</h4></p></h6>
 <h6>
-<p>&emsp;   "usernotes": "",</p>
+<p>&emsp;   "UserNotes": [
+    {
+      "UserRef": 1234,
+      "User": "Maria123",
+      "RecipeName": "gigi hadid pasta ",
+      "Note": "delicious!"
+    },
+    {
+      "UserRef": 5678,
+      "User": "Maria123",
+      "RecipeName": "Colombian arepas",
+      "Note": "add one more cup of flour next time"
+    }
+    // more UserNotes objects if present
+  ],</p>
 <p>&emsp;   "userbookmarks": "fettuccine alfredo, brownie and iceream mix",</p>
 <p>&emsp;   "user": "Maria123",</p>
 <p>&emsp;   "firstn": "Maria",</p>
