@@ -22,6 +22,7 @@ import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register/register.component';
 import { ProfileComponent } from './profile/profile.component';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
+import { RecipeComponent } from './recipe.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,8 @@ import { Ng2SearchPipeModule } from 'ng2-search-filter';
     HomeComponent,
     RegisterComponent,
     ProfileComponent,
+    RecipeComponent,
+
   ],
   imports: [
     BrowserModule,

@@ -2,22 +2,22 @@
         <h1>Create Account</h1>
         <form class="register-form" fxLayout="row">
           <mat-form-field>
-          <input [(ngModel)]="registerUserData.firstName" name="name" type="text" matInput placeholder="First Name">
+          <input [(ngModel)]="registerUserData.firstN" name="name" type="text" matInput placeholder="First Name">
           </mat-form-field>
           <mat-form-field>
-            <input [(ngModel)]="registerUserData.lastName" name="name" type="text" matInput placeholder="Last Name">
+            <input [(ngModel)]="registerUserData.lastN" name="name" type="text" matInput placeholder="Last Name">
           </mat-form-field>
         </form>
         <form class="register-form" fxLayout="row">
             <mat-form-field>
-              <input [(ngModel)]="registerUserData.name" name="username" type="text" matInput placeholder="Username">
+              <input [(ngModel)]="registerUserData.user" name="username" type="text" matInput placeholder="Username">
             </mat-form-field>
             <mat-form-field>
                 <input [(ngModel)]="registerUserData.password" name="password" matInput type="password" placeholder="Password">
             </mat-form-field>
         </form>
-        <mat-form-field class="field">
+        <!-- <mat-form-field class="field">
           <input [(ngModel)]="registerUserData.allergies" name="allergies" matInput placeholder="Allergies">
-        </mat-form-field>
+        </mat-form-field> -->
       <button (click)="registerUser()" type="submit">Create</button>
 </div>

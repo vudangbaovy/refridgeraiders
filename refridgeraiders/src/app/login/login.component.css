@@ -21,6 +21,13 @@
     font-family: Poppins, sans-serif;
 }
 
+.invalid-feedback {
+    color: red;
+    font-size: 12px;
+    font-family: Poppins, sans-serif;
+    align-self: center;
+}
+
 button {
     color: white;
     background-color: #5e9b81;
