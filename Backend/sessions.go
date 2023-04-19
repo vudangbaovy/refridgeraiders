@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -13,6 +14,17 @@ func cookieStore() *sessions.CookieStore {
 }
 
 func login(w http.ResponseWriter, r *http.Request) {
+
+	username := r.PostFormValue("username")
+	pass := r.PostFormValue("password")
+
+	// authenticate the user
+	checking, user := ValidateUser(username, pass, connectDB("test"))
+	if checking == false {
+		log.Fatalf("Incorrect credentials")
+		return
+	}
+
 	session, err := cookieStore().Get(r, "Cookie Name")
 	if err != nil {
 		log.Fatalln(err)
@@ -25,6 +37,8 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// return to frontend the user info
+	json.NewEncoder(w).Encode(user)
 }
 
 func AuthenticatedStat(w http.ResponseWriter, r *http.Request) {
