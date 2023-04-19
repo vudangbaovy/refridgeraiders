@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 
@@ -344,6 +345,44 @@ func TestUserDelete() bool {
 	return count1 == (count2 + 1)
 }
 
+func testLogin() bool {
+
+	// sending it as JSON
+	postBody, _ := json.Marshal(map[string]string{
+		"user":     "test123",
+		"password": "hello",
+	})
+	responseBody := bytes.NewBuffer(postBody)
+
+	http.Post("http://localhost:3000/user/register", "application/json", responseBody)
+	responseBody = bytes.NewBuffer(postBody)
+
+	res1, err := http.Post("http://localhost:3000/login", "application/json", responseBody)
+	if err != nil {
+		fmt.Printf("Request Error: %s\n", err)
+		fmt.Println("Unable to login: 361")
+		return false
+	}
+
+	defer res1.Body.Close()
+
+	body, err := ioutil.ReadAll(res1.Body)
+	if err != nil {
+		fmt.Printf("Read Error: %s\n", err)
+		fmt.Println("Unable to login: 370")
+		return false
+	} else {
+		if strings.Contains(string(body), "test123") {
+			fmt.Println("Successfully logged in")
+			return true
+		}
+		fmt.Println("Failed To Login")
+		return false
+	}
+
+	// check the return body and see if it contains the right name
+}
+
 // func correctPassDB(t *testing.T) bool {
 // return
 // }
@@ -366,7 +405,7 @@ func RunUnitTests(dbEmpty bool) {
 	fmt.Println("Test Username: ", user.User)
 	fmt.Println("Test Password: ", user.Password)
 
-	var results [9]bool
+	var results [10]bool
 
 	fmt.Println("Running hash password tests")
 	results[6] = correctPassTest(&testing.T{})
@@ -385,6 +424,8 @@ func RunUnitTests(dbEmpty bool) {
 	results[5] = testUserPOST()
 	results[4] = testUserPUT()
 	results[8] = TestUserDelete()
+	fmt.Println("Running login tests")
+	results[9] = testLogin()
 	fmt.Println("\nTest Results: ")
 
 	for i, v := range results {
