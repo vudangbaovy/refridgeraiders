@@ -1,6 +1,6 @@
 <div *ngIf="selectedRecipeData">
   <h2 id="recipe-title">{{ selectedRecipeData.recipe.label }}</h2>
-  <a href="#recipe-title"><i class="fas fa-bookmark"></i> Bookmark this recipe</a>
+  <a href="#recipe-title" (click)="sendStringToBackend(selectedRecipeData.recipe.label)"><i class="fas fa-bookmark"></i> Bookmark this recipe</a>
   <ul>
     <li *ngFor="let ingredient of selectedRecipeData.recipe.ingredientLines">{{ ingredient }}</li>
   </ul>
