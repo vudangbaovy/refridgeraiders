@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -21,15 +22,15 @@ func login(w http.ResponseWriter, r *http.Request) {
 	// authenticate the user
 	checking, user := ValidateUser(username, pass, connectDB("test"))
 	if checking == false {
-		log.Fatalf("Incorrect credentials")
+		fmt.Print("Incorrect credentials")
 		return
 	}
 
 	session, err := cookieStore().Get(r, "Cookie Name")
 	if err != nil {
-		log.Fatalln(err)
+		fmt.Print(err)
 	}
-
+	session.Values["user"] = username
 	session.Values["authenticated"] = true
 	// saves session to the cookie store
 	err = session.Save(r, w)
@@ -38,22 +39,28 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// return to frontend the user info
-	json.NewEncoder(w).Encode(user)
+	//json.NewEncoder(w).Encode(user)
+	err = json.NewEncoder(w).Encode(user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
-func AuthenticatedStat(w http.ResponseWriter, r *http.Request) {
+func AuthenticatedStat(w http.ResponseWriter, r *http.Request) (bool, string) {
 	session, err := cookieStore().Get(r, "Cookie Name")
 	if err != nil {
 		log.Fatalln(err)
 	}
 
 	auth := session.Values["authenticated"]
+	user := session.Values["user"].(string)
 	if auth == true {
 		w.WriteHeader(http.StatusOK)
-		return
+		return true, user
 	} else {
 		w.WriteHeader(http.StatusBadRequest)
-		return
+		return false, ""
 	}
 
 }
@@ -65,10 +72,11 @@ func logout(w http.ResponseWriter, r *http.Request) {
 	}
 
 	session.Values["authenticated"] = false
+	delete(session.Values, "user")
 	err = session.Save(r, w)
 	if err != nil {
 		return
 	}
 	// Redirect the user to the login page or home page
-	http.Redirect(w, r, "/login", http.StatusSeeOther)
+	//http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
