@@ -10,6 +10,8 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"log"
+	
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -91,6 +93,7 @@ func UserRegisterPost(w http.ResponseWriter, r *http.Request) {
 	user := UserProfile{User: newUserJson.User, Password: hash,
 		FirstN: newUserJson.FirstN, LastN: newUserJson.LastN, Allergies: "", UserBookMarks: ""}
 	addUser(&user, connectDB("test"))
+	ValidateUserSessions(w, r, newUserJson.User, newUserJson.Password, connectDB("test"))
 	json.NewEncoder(w).Encode(newUserJson)
 }
 
@@ -100,7 +103,7 @@ func UserPOST(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&LUS)
 
 	db := connectDB("test")
-	valid, user := ValidateUser(LUS.User, LUS.Password, db)
+	valid, user := ValidateUserSessions(w, r, LUS.User, LUS.Password, db)
 	if valid {
 		LUS.FirstN = user.FirstN
 		LUS.LastN = user.LastN
@@ -116,7 +119,7 @@ func UserPUT(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&LUS)
 
 	db := connectDB("test")
-	valid, user := ValidateUser(LUS.User, LUS.Password, db)
+	valid, user := ValidateUserSessions(w, r, LUS.User, LUS.Password, db)
 	if valid {
 		db.Model(&user).Updates(UserProfile{FirstN: LUS.FirstN, LastN: LUS.LastN})
 		json.NewEncoder(w).Encode(&LUS)
@@ -131,7 +134,7 @@ func AllergiesPost(w http.ResponseWriter, r *http.Request) {
 	var ARJ AllergiesJson
 	json.NewDecoder(r.Body).Decode(&ARJ)
 
-	valid, user := ValidateUser(ARJ.User, ARJ.Password, connectDB("test"))
+	valid, user := ValidateUserSessions(w, r, ARJ.User, ARJ.Password, connectDB("test"))
 
 	if valid {
 		ARJ = AllergiesJson{User: user.User, Password: ARJ.Password, Allergies: user.Allergies}
@@ -148,7 +151,7 @@ func AllergiesPut(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&AEJ)
 
 	db := connectDB("test")
-	valid, user := ValidateUser(AEJ.User, AEJ.Password, db)
+	valid, user := ValidateUserSessions(w, r, AEJ.User, AEJ.Password, db)
 	if valid {
 		exists, _ := StrHelper(user.Allergies, AEJ.Allergies)
 		if !exists{
@@ -167,7 +170,7 @@ func AllergiesDelete(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&AEJ)
 
 	db := connectDB("test")
-	valid, user := ValidateUser(AEJ.User, AEJ.Password, db)
+	valid, user := ValidateUserSessions(w, r, AEJ.User, AEJ.Password, db)
 
 	if valid {
 		exists, index := StrHelper(user.Allergies, AEJ.Allergies)
@@ -190,7 +193,7 @@ func UserDelete(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&deleteJson)
 
 	db := connectDB("test")
-	valid, user := ValidateUser(deleteJson.User, deleteJson.Password, db)
+	valid, user := ValidateUserSessions(w, r, deleteJson.User, deleteJson.Password, db)
 
 	if valid {
 		db.Select("UserNotes").Delete(&UserProfile{}, user.ID)
@@ -216,6 +219,7 @@ func addUser(addUser *UserProfile, db *gorm.DB) (bool, *UserProfile) {
 func ValidateUser(inputUserName string, inputPassword string, db *gorm.DB) (bool, *UserProfile) {
 	//function tests inputted username and password against database, returns true and user's profile struct if successful
 	//returns false and empty struct if unsuccessful
+
 	var user UserProfile
 
 	//fmt.Println("User Login  : Username:", inputUserName, " Password:", inputPassword)
@@ -227,6 +231,38 @@ func ValidateUser(inputUserName string, inputPassword string, db *gorm.DB) (bool
 	return true, &user
 }
 
+func ValidateUserSessions(w http.ResponseWriter, r *http.Request, inputUserName string, inputPassword string, db *gorm.DB) (bool, *UserProfile) {
+	//function tests inputted username and password against database, returns true and user's profile struct if successful
+	//returns false and empty struct if unsuccessful
+
+	var user UserProfile
+
+	session, err := cookieStore().Get(r, "Cookie-Name")
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	auth := session.Values["authenticated"]
+	if auth == true {
+		db.Where("User = ?", session.Values["user"].(string)).First(&user)
+		return true, &user
+	}
+
+	
+	//fmt.Println("User Login  : Username:", inputUserName, " Password:", inputPassword)
+	err2 := db.Where("User = ?", inputUserName).First(&user)
+	if err2.Error != nil || !compareHash(inputPassword, user.Password) {
+		fmt.Println("Login Attempt Failed")
+		return false, nil
+	}
+
+	session.Values["authenticated"] = true
+	session.Values["user"] = user.User
+	session.Save(r, w)
+	
+	return true, &user
+}
+
 func CreateNotePost(w http.ResponseWriter, r *http.Request) {
 	//function add a new userNote type to personal user profile, username, password, and recipe required in json body
 	w.Header().Set("Content-Type", "application/json")
@@ -234,7 +270,7 @@ func CreateNotePost(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&noteJson)
 
 	db := connectDB("test")
-	valid, user := ValidateUser(noteJson.User, noteJson.Password, db)
+	valid, user := ValidateUserSessions(w, r, noteJson.User, noteJson.Password, db)
 	if valid {
 		db.Model(&user).Association("UserNotes").Append(&UserNote{User: noteJson.User, RecipeName: noteJson.RecipeName, Note: noteJson.Note})
 		count := db.Model(&user).Association("UserNotes").Count()
@@ -252,7 +288,7 @@ func NotePost(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&noteJson)
 
 	db := connectDB("test")
-	valid, user := ValidateUser(noteJson.User, noteJson.Password, db)
+	valid, user := ValidateUserSessions(w, r, noteJson.User, noteJson.Password, db)
 
 	if valid {
 		exists, note := NoteHelper(noteJson.RecipeName, user, db)
@@ -284,7 +320,7 @@ func NotePut(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&noteJson)
 
 	db := connectDB("test")
-	valid, user := ValidateUser(noteJson.User, noteJson.Password, db)
+	valid, user := ValidateUserSessions(w, r, noteJson.User, noteJson.Password, db)
 
 	if valid {
 		var notes []UserNote
@@ -310,7 +346,7 @@ func NoteDelete(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&noteJson)
 
 	db := connectDB("test")
-	valid, user := ValidateUser(noteJson.User, noteJson.Password, db)
+	valid, user := ValidateUserSessions(w, r, noteJson.User, noteJson.Password, db)
 
 	if valid {
 		var notes []UserNote
@@ -336,7 +372,7 @@ func BookmarkPost(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&BMJson)
 
 	db := connectDB("test")
-	valid, user := ValidateUser(BMJson.User, BMJson.Password, db)
+	valid, user := ValidateUserSessions(w, r, BMJson.User, BMJson.Password, db)
 
 	if valid {
 		BMJson.UserBookMarks = user.UserBookMarks
@@ -352,7 +388,7 @@ func BookmarkPut(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&BMJson)
 
 	db := connectDB("test")
-	valid, user := ValidateUser(BMJson.User, BMJson.Password, db)
+	valid, user := ValidateUserSessions(w, r, BMJson.User, BMJson.Password, db)
 
 	if valid {
 		exists, _ := StrHelper(user.UserBookMarks, BMJson.UserBookMarks)
@@ -372,7 +408,7 @@ func BookmarkDelete(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&BMJson)
 
 	db := connectDB("test")
-	valid, user := ValidateUser(BMJson.User, BMJson.Password, db)
+	valid, user := ValidateUserSessions(w, r, BMJson.User, BMJson.Password, db)
 
 	if valid {
 		exists, index := StrHelper(user.UserBookMarks, BMJson.UserBookMarks)
