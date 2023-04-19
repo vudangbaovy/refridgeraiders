@@ -81,7 +81,6 @@ func logout(w http.ResponseWriter, r *http.Request) {
 
 	session.Values["user"] = ""
 	session.Values["authenticated"] = false
-	session.Values["user"] = ""
 	err = session.Save(r, w)
 	if err != nil {
 		return
