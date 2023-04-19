@@ -14,7 +14,7 @@
                 placeholder="Password"
                 class="form-control">
               </mat-form-field>
-              <!--<div *ngIf="invalid" class="invalid-feedback">Invalid username or password</div>-->
+              <div *ngIf="invalid" class="invalid-feedback">Invalid username or password</div>
               <button (click)="loginUser()" type="submit">Log In</button>
           </form>
           <p class="hyperlink" (click)="redirect()">First time at KitchenRescue?</p>

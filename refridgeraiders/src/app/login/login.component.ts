@@ -57,6 +57,7 @@ export class LoginComponent implements OnInit {
         this.invalid = true;
       }
   }
+  
   redirect() {
     this.router.navigate(['/register']);
   }

@@ -41,12 +41,11 @@ export class DataService {
   loginUser(user: any): Observable<any> {
     console.log(user)
     return this.http.post(this.loginUrl, user).pipe(map((response: any) => {
-      // do whatever with your response
-      if (response.status !== 200) { 
-        this.isLoggedIn = false;
-        this.faultyLogin = true;
-        return;
-      }
+      // if (response.status !== 200) { 
+      //   this.isLoggedIn = false;
+      //   this.faultyLogin = true;
+      //   return;
+      // }
       this.isLoggedIn = true;
       if (this.redirectUrl) {
         this.router.navigate([this.redirectUrl]);
@@ -56,6 +55,9 @@ export class DataService {
   }
 
   logout() {
+    this.http.get('http://localhost:3000/logout').subscribe((response: any) => {
+      console.log(response);
+    });
     this.isLoggedIn = false;
     this.router.navigate(['login']);
   }
