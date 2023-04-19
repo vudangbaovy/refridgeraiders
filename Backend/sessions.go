@@ -15,7 +15,7 @@ func cookieStore() *sessions.CookieStore {
 
 func login(w http.ResponseWriter, r *http.Request) {
 
-	username := r.PostFormValue("username")
+	username := r.PostFormValue("user")
 	pass := r.PostFormValue("password")
 
 	// authenticate the user
@@ -69,4 +69,6 @@ func logout(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
+	// Redirect the user to the login page or home page
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
