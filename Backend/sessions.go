@@ -26,7 +26,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	session, err := cookieStore().Get(r, "Cookie Name")
+	session, err := cookieStore().Get(r, "Cookie-Name")
 	if err != nil {
 		fmt.Print(err)
 	}
@@ -48,7 +48,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 }
 
 func AuthenticatedStat(w http.ResponseWriter, r *http.Request) (bool, string) {
-	session, err := cookieStore().Get(r, "Cookie Name")
+	session, err := cookieStore().Get(r, "Cookie-Name")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -66,13 +66,13 @@ func AuthenticatedStat(w http.ResponseWriter, r *http.Request) (bool, string) {
 }
 
 func logout(w http.ResponseWriter, r *http.Request) {
-	session, err := cookieStore().Get(r, "Cookie Name")
+	session, err := cookieStore().Get(r, "Cookie-Name")
 	if err != nil {
 		return
 	}
 
 	session.Values["authenticated"] = false
-	delete(session.Values, "user")
+	session.Values["user"] = ""
 	err = session.Save(r, w)
 	if err != nil {
 		return

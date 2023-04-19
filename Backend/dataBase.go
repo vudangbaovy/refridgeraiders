@@ -244,6 +244,7 @@ func ValidateUserSessions(w http.ResponseWriter, r *http.Request, inputUserName 
 
 	auth := session.Values["authenticated"]
 	if auth == true {
+		fmt.Println(session.Values["user"].(string))
 		db.Where("User = ?", session.Values["user"].(string)).First(&user)
 		return true, &user
 	}
@@ -254,7 +255,7 @@ func ValidateUserSessions(w http.ResponseWriter, r *http.Request, inputUserName 
 	if err2.Error != nil || !compareHash(inputPassword, user.Password) {
 		fmt.Println("Login Attempt Failed")
 		session.Values["authenticated"] = false
-		delete(session.Values, "user")
+		session.Values["user"] = ""
 		session.Save(r, w)
 		return false, nil
 	}
