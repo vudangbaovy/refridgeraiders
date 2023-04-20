@@ -254,3 +254,13 @@ status code 201 if unsuccessful</p>
 <p>This test tests the password functions, which include hashing the passwords and comparing the real password with the hashed one. This test compares the correct password, that was previously declared and hashed, and compared with the stored hash password.</p>
 <h3>Incorrect Password Testing</h3>
 <p>Similar to the one above, this test hashes a password given and then is then compared with a different (wrong) password.</p>
+    <br>
+<h3>Login Test</h3>
+<p>A test user is sent to the user/register endpoint to get them in the database,then the login endpoint is called. This returns a boolean to indicate if the user was able to login or not </p>
+<p>This requires the login function in sessions to work properly</p>
+<br>
+ <br>
+<h3>Logout Test</h3>
+<p>Similar to the login test, a test user is registered and then logged in through the API endpoints. Then the /logout get endpoint is called which also returns a boolean indicating if the user was able to logout </p>
+<p>This requires the logout function in sessions to work properly</p>
+<br>
