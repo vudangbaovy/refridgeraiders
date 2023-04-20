@@ -22,3 +22,9 @@
 <li>Install Ng2SearchPipeModule</li>
 </ul>
 <p>To start the front-end, navigate to the refrigeraders/refrideraders folder and run the command <code>ng serve -o</code> from the terminal</p>
+<h4>Back-end</h4>
+<ul>
+<li>Install Go </li>
+<li>Run Go mod titdy</li>
+</ul>
+<p>To start the back-end, navigate to the refrigeraders/backend folder and run the command <code>go run .</code> from the terminal</p>
