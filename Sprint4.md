@@ -7,8 +7,8 @@
 <p>Front-end is currently using POST request to /login for the login function and /user to get user's profile information from the databse.</p>
 
 <h3>Tests</h3>
-<p> 1. Cypress test for functionality of home page and the user registration routing from Home > Log In > "First time at KitchenRescue?" > Register</p>
-<p>2. Cypress test to verify that the POST request to backend database returns the correct username of the current logged in user</p>
+<p>1. Cypress test to verify that the POST request to backend database returns the correct username of the current logged in user. The test intercepts the API call to verifies the user being sent and the JSON file being returned from the backend API.</p>
+<p>3. Cypress test calling the Edamam API with a query string parameter “cake.” The test ensures that the function successfully makes a call to a json file consisting of 10 hits consisting of this item and that the first hit contains a certain ingredient.
 
 <h2>Backend</h2>
 <h3><p>What's changed:</p></h3>
