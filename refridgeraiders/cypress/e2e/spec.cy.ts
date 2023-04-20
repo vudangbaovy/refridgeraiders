@@ -7,3 +7,17 @@ describe('Login Test', () => {
     cy.url().should('include', '/register')
   })
 })
+
+describe('Profile Component', () => {
+  it('should retrieve user profile on init', () => {
+    cy.intercept('POST', 'http://localhost:3000/user', (req) => {
+      req.reply({ user: 'vyvooz' });
+    }).as('getUser');
+
+    cy.visit('http://localhost:4200/profile');
+
+    cy.wait('@getUser').then((interception) => {
+      expect(interception.response.body).to.have.property('user', 'vyvooz');
+    });
+  });
+});

@@ -1,5 +1,23 @@
-<h2>Backend API</h2>
+<h2>Frontend</h2>
+<h3><p>What's changed:</p></h3>
+<p>1. Allowed displaying of the recipes</p>
+<p>2. Integrated recipe bookmarking</p>
+<p>3. Profile page now displays the current logged in user's name and username</p>
+
+<p>Front-end is currently using POST request to /login for the login function and /user to get user's profile information from the databse.</p>
+
+<h3>Tests</h3>
+<p>1. Cypress test to verify that the POST request to backend database returns the correct username of the current logged in user. The test intercepts the API call to verifies the user being sent and the JSON file being returned from the backend API.</p>
+<p>3. Cypress test calling the Edamam API with a query string parameter “cake.” The test ensures that the function successfully makes a call to a json file consisting of 10 hits consisting of this item and that the first hit contains a certain ingredient.
+
+<h2>Backend</h2>
+<h3><p>What's changed:</p></h3>
+<p>1. Backend issues with sessions have been fixed</p>
+<p>2. All previous and current api calls have the ablilty to create sessions(in the case one already isnt up and a username and password is provided) or use a preexisting session if already authorized</p>
+<p>3. /bookmark is now available (Post, Put and delete)</p>
+<p>4. Fixed bugs with front and backend connection</p>
 <br>
+<h2>Backend API</h2>
 <h3>Localhost:3000/login </h3>
 <p> Validates user login credentials and returns user profile information if true
 <p>&emsp;   "user": "Maria123",</p>
@@ -27,14 +45,14 @@
 <p>&emsp;   "lastn": "Morales",</p>
 <p>&emsp;   "password": "pass",</p>
 <p>&emsp;   "allergies": "Pie"</h6></p>
-<h4><p>If Unsuccessful Returns:</h4></p>>"UserNotes"
+<h4><p>If Unsuccessful Returns:</h4>
  </h6>
 
 
 <h3>Localhost:3000/allergies </h3>
 <p>The /allergies calls need a JSON with the following: "name", "password" and "allergies".</p>
 Gives the user's data about their allergies so once we get tokens working may change. The allergies can be left blank in the case of POST.</p>
-sends an empty json of same format if unsuccessful (will eventually be changed to error messages)</p>
+status code 201 if unsuccessful</p>
 </br>
 <p><h5>1. Getting User's Allergies: POST</p>
 <p><h5>2. Updating User's Allergies: PUT</p>
@@ -50,25 +68,23 @@ sends an empty json of same format if unsuccessful (will eventually be changed t
 <p>&emsp;   "allergies": "Pie"</h6></p>
 <h4><p>If Unsuccessful Returns:</h4></p>
 <h6>
-<p>&emsp;   "user": "",</p>
-<p>&emsp;   "password": "",</p>
-<p>&emsp;   "allergies": ""</h6></p>
+<p>Status Code: 201</h6></p>
 <br>
 <h4><p>PUT Example:</h4></p>
 <h6>
 <p>&emsp;   "user": "Nick",</p>
 <p>&emsp;   "password": "Pwe2",</p>
-<p>&emsp;   "allergies": "NewAllergy,Pie"</h6></p>
+<p>&emsp;   "allergies": "NewAllergy"</h6></p>
 <h4><p>Returns:</h4></p>
 <h6>
 <p>&emsp;   "user": "Nick",</p>
 <p>&emsp;   "password": "Pwe2",</p>
-<p>&emsp;   "allergies": "NewAllergy,Pie"</h6></p>
+<p>&emsp;   "allergies": ",preExisting,NewAllergy"</h6></p>
 <br>
 <p><h3>Localhost:3000/user/register</h3>
 <p>/user/register calls need a JSON with the following: "name", "password", "firstN" and "lastN".</p>
 <p>creates a new user entry in the database, lastN and firstN can be left blank</p>
-sends an empty json of same format if unsuccessful (will eventually be changed to error messages)</p>
+status code 201 if unsuccessful</p>
 <br>
 <p>1. Adding a new User: POST</p>
 </br>
@@ -88,7 +104,7 @@ sends an empty json of same format if unsuccessful (will eventually be changed t
 <p><h3>Localhost:3000/user</h3>
 /user calls need a JSON with the following: "user", "password", "firstN" and "lastN".</p>
 returns username, password, first and last name</p>
-sends an empty json of same format if unsuccessful (will eventually be changed to error messages)</p>
+status code 201 if unsuccessful</p>
 <br>
 <p>1. Getting a User's First & Last name: POST</p>
 <p>2. Changing a User's First & Last name: PUT</p>
@@ -121,7 +137,7 @@ sends an empty json of same format if unsuccessful (will eventually be changed t
 <p><h3>Localhost:3000/note/create</h3>
 /note/create calls need a JSON with the following: "user", "password", "recipeName" and "note".</p>
 user and password required for right now until tokens, recipeName is the name of the recipe, and note is the note</p>
-sends an empty json of same format if unsuccessful (will eventually be changed to error messages)</p>
+status code 201 if unsuccessful</p>
 <br>
 <p>1. Adding a new user note: POST</p>
 <br>
@@ -141,7 +157,7 @@ sends an empty json of same format if unsuccessful (will eventually be changed t
 <p><h3>Localhost:3000/note</h3>
 /note calls need a JSON with the following: "user", "password", "recipeName" and "note".</p>
 same parameters as /note/create, note can be blank for POST</p>
-sends an empty json of same format if unsuccessful (will eventually be changed to error messages)</p>
+status code 201 if unsuccessful</p>
 <br>
 <p>1. Gets a user's note: POST</p>
 <p>2. Updates a user's note: PUT</p>
@@ -158,6 +174,37 @@ sends an empty json of same format if unsuccessful (will eventually be changed t
 <p>&emsp;   "password": "Pwe3",</p>
 <p>&emsp;   "recipeName": "Pizza"</p>
 <p>&emsp;   "note": "TOO MUCH CHEESE",</h6></p>
+<br>
+
+<p><h3>Localhost:3000/bookmark</h3>
+/bookmark calls need a JSON with the following: "user", "password" and "bookmark".</p>
+status code 201 if unsuccessful</p>
+<br>
+<p>1. Gets a user's bookmarks: POST</p>
+<p>2. adds a user's bookmark: PUT</p>
+<p>3. Deleting a user's bookmark: DELETE</p>
+<br>
+<h4><p>PUT Example:</h4></p>
+<h6>
+<p>&emsp;   "user": "Nick",</p>
+<p>&emsp;   "password": "Pwe3",</p>
+<p>&emsp;   "bookmark": "Pizza"</h6></p>
+<h4><p>Returns:</h4></p>
+<h6>
+<p>&emsp;   "user": "Nick",</p>
+<p>&emsp;   "password": "Pwe3",</p>
+<p>&emsp;   "recipeName": ",preExisting,Pizza"</p>
+<br>
+<h4><p>POST Example:</h4></p>
+<h6>
+<p>&emsp;   "user": "Nick",</p>
+<p>&emsp;   "password": "Pwe3",</p>
+<p>&emsp;   "bookmark": ""</h6></p>
+<h4><p>Returns:</h4></p>
+<h6>
+<p>&emsp;   "user": "Nick",</p>
+<p>&emsp;   "password": "Pwe3",</p>
+<p>&emsp;   "recipeName": ",preExisting,Pizza"</p>
 <br>
 
 <h2>Backend Unit Tests</h2>
@@ -199,7 +246,21 @@ sends an empty json of same format if unsuccessful (will eventually be changed t
 <p>This test is relatively simple, it tests if the server is can read json files through the router this test runs on server start up.</p>
 <p>This requires the server and router to receive interpret and react to the test.</p>
 <br>
+<h3>Bookmark API Test </h3>
+<p>This test is the lengthiest test out of them all, and represents a complete end to end test of the bookmark command, the test first calls the server through a POST to /bookmark to check that there are no preExisting bookmarks, then adds two bookmarks (KeyLimePie and Pie) individually and ensures their response is correct, then the test checks both bookmarks were added by calling the POST command (using the opened session) again and finally the Pie bookmark is deleted and the KeyLimePie is check to ensure that delete properly deleted the correct bookmark. </p>
+<p>This requires the server and router to receive interpret and react to the test.</p>
+<br>
 <h3> Correct Password Testing</h3>
 <p>This test tests the password functions, which include hashing the passwords and comparing the real password with the hashed one. This test compares the correct password, that was previously declared and hashed, and compared with the stored hash password.</p>
 <h3>Incorrect Password Testing</h3>
 <p>Similar to the one above, this test hashes a password given and then is then compared with a different (wrong) password.</p>
+    <br>
+<h3>Login Test</h3>
+<p>A test user is sent to the user/register endpoint to get them in the database,then the login endpoint is called. This returns a boolean to indicate if the user was able to login or not </p>
+<p>This requires the login function in sessions to work properly</p>
+<br>
+ <br>
+<h3>Logout Test</h3>
+<p>Similar to the login test, a test user is registered and then logged in through the API endpoints. Then the /logout get endpoint is called which also returns a boolean indicating if the user was able to logout </p>
+<p>This requires the logout function in sessions to work properly</p>
+<br>

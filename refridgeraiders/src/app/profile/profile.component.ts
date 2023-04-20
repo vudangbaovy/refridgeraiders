@@ -13,8 +13,8 @@ export class ProfileComponent {
   constructor(private dataService: DataService, private login: LoginComponent) { }
   ngOnInit() {
     const getUser = {
-      user: "vyvooz",
-      password: "123hello"
+      user: "",
+      password: ""
     }
     console.log(this.login.loginUserData)
     this.dataService.getUser(getUser).subscribe((response: any) => {
