@@ -313,6 +313,7 @@ func incorrectPassTest(t *testing.T) bool {
 }
 
 func TestUserDelete() bool {
+	fmt.Println("\nTest 7 -------------------------------------")
 
 	client := &http.Client{}
 
@@ -398,6 +399,179 @@ func testLogin() bool {
 
 }
 
+func testBookmark()(bool) {
+	fmt.Println("\nTest 6 -------------------------------------")
+	client := &http.Client{}
+
+	//first message
+	postBody, _ := json.Marshal(map[string]string{
+		"user":     "Nick",
+		"password": "Pwe2",
+		"bookmarks": "",
+	})
+
+	//sends message
+	req, err := http.NewRequest(http.MethodPost, "http://localhost:3000/bookmark", bytes.NewBuffer(postBody))
+	if err != nil {
+		fmt.Printf("Request Error: %s\n", err)
+		return false
+	}
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Printf("Request Error: %s\n", err)
+		return false
+	}
+
+	//checks response
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Printf("Read Error: %s\n", err)
+	}
+	if !strings.Contains(string(body), "\"bookmarks\":\"\"") {
+		return false
+	}
+
+
+
+
+
+	//second message a put to add a bookmark
+	postBody2, _ := json.Marshal(map[string]string{
+		"user":     "Nick",
+		"password": "Pwe2",
+		"bookmarks": "KeyLimePie",
+	})
+
+	req, err = http.NewRequest(http.MethodPut, "http://localhost:3000/bookmark", bytes.NewBuffer(postBody2))
+	if err != nil {
+		fmt.Printf("Request Error: %s\n", err)
+		return false
+	}
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+	res, err = client.Do(req)
+	if err != nil {
+		fmt.Printf("Request Error: %s\n", err)
+		return false
+	}
+
+	//checks response
+	body, err = ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Printf("Read Error: %s\n", err)
+	}
+	if !strings.Contains(string(body), "KeyLimePie") {
+		return false
+	}
+
+
+
+
+
+	postBody3, _ := json.Marshal(map[string]string{
+		"user":     "Nick",
+		"password": "Pwe2",
+		"bookmarks": "Pie",
+	})
+
+	//third message adds another bookmark containing same name
+	req, err = http.NewRequest(http.MethodPut, "http://localhost:3000/bookmark", bytes.NewBuffer(postBody3))
+	if err != nil {
+		fmt.Printf("Request Error: %s\n", err)
+		return false
+	}
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+	res, err = client.Do(req)
+	if err != nil {
+		fmt.Printf("Request Error: %s\n", err)
+		return false
+	}
+
+	//checks response
+	body, err = ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Printf("Read Error: %s\n", err)
+	}
+	if !strings.Contains(string(body), "Pie") {
+		return false
+	}
+
+
+
+	//fourth message to check all
+	req, err = http.NewRequest(http.MethodPost, "http://localhost:3000/bookmark", bytes.NewBuffer(postBody))
+	if err != nil {
+		fmt.Printf("Request Error: %s\n", err)
+		return false
+	}
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+	res, err = client.Do(req)
+	if err != nil {
+		fmt.Printf("Request Error: %s\n", err)
+		return false
+	}
+
+	//checks response
+	body, err = ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Printf("Read Error: %s\n", err)
+	}
+	if !strings.Contains(string(body), "KeyLimePie,Pie") {
+		return false
+	}
+
+
+
+	//fith message deletes pie
+	req, err = http.NewRequest(http.MethodDelete, "http://localhost:3000/bookmark", bytes.NewBuffer(postBody3))
+	if err != nil {
+		fmt.Printf("Request Error: %s\n", err)
+		return false
+	}
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+	res, err = client.Do(req)
+	if err != nil {
+		fmt.Printf("Request Error: %s\n", err)
+		return false
+	}
+
+	//checks response
+	body, err = ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Printf("Read Error: %s\n", err)
+	}
+	if !strings.Contains(string(body), "Pie") {
+		return false
+	}
+
+
+
+	//sixth message checks to make sure we didnt delete wrong
+	req, err = http.NewRequest(http.MethodPost, "http://localhost:3000/bookmark", bytes.NewBuffer(postBody3))
+	if err != nil {
+		fmt.Printf("Request Error: %s\n", err)
+		return false
+	}
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+	res, err = client.Do(req)
+	if err != nil {
+		fmt.Printf("Request Error: %s\n", err)
+		return false
+	}
+
+	//checks response
+	body, err = ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Printf("Read Error: %s\n", err)
+	}
+	if !strings.Contains(string(body), "KeyLimePie") {
+		return false
+	}
+	
+
+	return true
+}
+
 // func correctPassDB(t *testing.T) bool {
 // return
 // }
@@ -420,7 +594,7 @@ func RunUnitTests(dbEmpty bool) {
 	fmt.Println("Test Username: ", user.User)
 	fmt.Println("Test Password: ", user.Password)
 
-	var results [10]bool
+	var results [11]bool
 
 	fmt.Println("Running hash password tests")
 	results[6] = correctPassTest(&testing.T{})
@@ -438,8 +612,9 @@ func RunUnitTests(dbEmpty bool) {
 	results[3] = testNotesPOST()
 	results[5] = testUserPOST()
 	results[4] = testUserPUT()
-	results[8] = TestUserDelete()
 	fmt.Println("Running login tests")
+	results[10] = testBookmark()
+	results[8] = TestUserDelete()
 	results[9] = testLogin()
 	fmt.Println("\nTest Results: ")
 

@@ -124,7 +124,7 @@ func UserPUT(w http.ResponseWriter, r *http.Request) {
 		db.Model(&user).Updates(UserProfile{FirstN: LUS.FirstN, LastN: LUS.LastN})
 		json.NewEncoder(w).Encode(&LUS)
 	} else {
-		json.NewEncoder(w).Encode(&LoginJson{})
+		w.WriteHeader(201)
 	}
 }
 
@@ -140,7 +140,7 @@ func AllergiesPost(w http.ResponseWriter, r *http.Request) {
 		ARJ = AllergiesJson{User: user.User, Password: ARJ.Password, Allergies: user.Allergies}
 		json.NewEncoder(w).Encode(&ARJ)
 	} else {
-		json.NewEncoder(w).Encode(&AllergiesJson{})
+		w.WriteHeader(201)
 	}
 }
 
@@ -160,7 +160,7 @@ func AllergiesPut(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(&AEJ)
 		}
 	} else {
-		json.NewEncoder(w).Encode(&AllergiesJson{})
+		w.WriteHeader(201)
 	}
 }
 
@@ -182,7 +182,7 @@ func AllergiesDelete(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(&AllergiesJson{})
 		}
 	} else {
-		json.NewEncoder(w).Encode(&AllergiesJson{})
+		w.WriteHeader(201)
 	}
 }
 
@@ -199,7 +199,7 @@ func UserDelete(w http.ResponseWriter, r *http.Request) {
 		db.Select("UserNotes").Delete(&UserProfile{}, user.ID)
 		json.NewEncoder(w).Encode(&deleteJson)
 	} else {
-		json.NewEncoder(w).Encode(&AllergiesJson{})
+		w.WriteHeader(201)
 	}
 }
 
@@ -281,7 +281,7 @@ func CreateNotePost(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Number of notes: ", count)
 		json.NewEncoder(w).Encode(&noteJson)
 	} else {
-		json.NewEncoder(w).Encode(&UserNoteJson{})
+		w.WriteHeader(201)
 	}
 }
 
@@ -301,7 +301,7 @@ func NotePost(w http.ResponseWriter, r *http.Request) {
 		}
 		json.NewEncoder(w).Encode(&noteJson)
 	} else {
-		json.NewEncoder(w).Encode(&UserNoteJson{})
+		w.WriteHeader(201)
 	}
 }
 
@@ -340,7 +340,7 @@ func NotePut(w http.ResponseWriter, r *http.Request) {
 		}
 		json.NewEncoder(w).Encode(&UserNoteJson{})
 	} else {
-		json.NewEncoder(w).Encode(&UserNoteJson{})
+		w.WriteHeader(201)
 	}
 }
 
@@ -366,7 +366,7 @@ func NoteDelete(w http.ResponseWriter, r *http.Request) {
 		}
 		json.NewEncoder(w).Encode(&UserNoteJson{})
 	} else {
-		json.NewEncoder(w).Encode(&UserNoteJson{})
+		w.WriteHeader(201)
 	}
 }
 
@@ -382,7 +382,7 @@ func BookmarkPost(w http.ResponseWriter, r *http.Request) {
 		BMJson.UserBookMarks = user.UserBookMarks
 		json.NewEncoder(w).Encode(&BMJson)
 	} else {
-		json.NewEncoder(w).Encode(&BookMarkJson{})
+		w.WriteHeader(201)
 	}
 }
 
@@ -402,7 +402,7 @@ func BookmarkPut(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(&BMJson)
 		}
 	} else {
-		json.NewEncoder(w).Encode(&BookMarkJson{})
+		w.WriteHeader(201)
 	}
 }
 
@@ -424,7 +424,7 @@ func BookmarkDelete(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(&BookMarkJson{})
 		}
 	} else {
-		json.NewEncoder(w).Encode(&BookMarkJson{})
+		w.WriteHeader(201)
 	}
 }
 
