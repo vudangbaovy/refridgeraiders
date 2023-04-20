@@ -89,7 +89,7 @@ func UserRegisterPost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println("password unable to be hashed")
 	}
-
+	fmt.Println("first: ", newUserJson.FirstN, "last: ", newUserJson.LastN)
 	user := UserProfile{User: newUserJson.User, Password: hash,
 		FirstN: newUserJson.FirstN, LastN: newUserJson.LastN, Allergies: "", UserBookMarks: ""}
 	addUser(&user, connectDB("test"))
@@ -105,9 +105,13 @@ func UserPOST(w http.ResponseWriter, r *http.Request) {
 	db := connectDB("test")
 	valid, user := ValidateUserSessions(w, r, LUS.User, LUS.Password, db)
 	if valid {
+		fmt.Println("first: ", user.FirstN, "last: ", user.LastN)
 		LUS.FirstN = user.FirstN
 		LUS.LastN = user.LastN
+		fmt.Println("first: ", LUS.FirstN, "last: ", LUS.LastN)
+		fmt.Print("altered Username: ", LUS.User)
 		json.NewEncoder(w).Encode(&LUS)
+		fmt.Printf("w: %v\n", w)
 	} else {
 		w.WriteHeader(201)
 	}

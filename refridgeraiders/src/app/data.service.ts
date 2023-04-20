@@ -39,7 +39,6 @@ export class DataService {
   //   return this.http.post<any>(this.loginUrl, user)
   // }
   loginUser(user: any): Observable<any> {
-    console.log(user)
     return this.http.post(this.loginUrl, user).pipe(map((response: any) => {
       // if (response.status !== 200) { 
       //   this.isLoggedIn = false;
@@ -51,6 +50,8 @@ export class DataService {
         this.router.navigate([this.redirectUrl]);
         this.redirectUrl = '/';
       }
+      //console.log(user)
+      return response;
     }));
   }
 
@@ -62,7 +63,10 @@ export class DataService {
     this.router.navigate(['login']);
   }
 
-  getUser() {
-    return this.http.post(this.getUserUrl, {token: localStorage.getItem('token')});
+  getUser(user: any) {
+    return this.http.post('http://localhost:3000/user', user).pipe(map((response: any) => {
+      console.log(response);
+      return response;
+    }));
   }
 }

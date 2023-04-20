@@ -56,7 +56,8 @@ import { RecipeComponent } from './recipe.component';
     DataService,
     {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'outline'}},
     HttpClientModule,
-    HttpClient
+    HttpClient,
+    LoginComponent
   ],
   bootstrap: [AppComponent]
 })
