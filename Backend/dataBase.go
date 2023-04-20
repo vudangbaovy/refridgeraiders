@@ -240,8 +240,8 @@ func ValidateUserSessions(w http.ResponseWriter, r *http.Request, inputUserName 
 	//returns false and empty struct if unsuccessful
 
 	var user UserProfile
-	fmt.Println("password: ", inputPassword)
 	session, err := cookieStore().Get(r, "Cookie-Name")
+	fmt.Printf("r.Cookies(): %v\n", r.Cookies())
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -265,6 +265,16 @@ func ValidateUserSessions(w http.ResponseWriter, r *http.Request, inputUserName 
 
 	session.Values["authenticated"] = true
 	session.Values["user"] = user.User
+
+	cookie := &http.Cookie{
+        Name: "Cookie-Name",
+        Value: session.ID,
+        Path: "/",
+        HttpOnly: true,
+        MaxAge: 3600,
+    }
+    http.SetCookie(w, cookie)
+	fmt.Printf("cookie2: %v\n", cookie.Value)
 	session.Save(r, w)
 
 	return true, &user

@@ -14,6 +14,7 @@ type userLogin struct {
 	Password string `json:"password"`
 }
 
+
 func cookieStore() *sessions.CookieStore {
 	cookieStore := sessions.NewCookieStore([]byte("secret-session-key"))
 	return cookieStore

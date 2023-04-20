@@ -10,7 +10,6 @@ import (
 	"strings"
 	"testing"
 	"time"
-
 	"gorm.io/gorm"
 )
 
@@ -410,6 +409,10 @@ func testBookmark()(bool) {
 		"bookmarks": "",
 	})
 
+	req, _ := http.NewRequest(http.MethodGet, "http://localhost:3000/logout", bytes.NewBuffer(postBody))
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+	client.Do(req)
+
 	//sends message
 	req, err := http.NewRequest(http.MethodPost, "http://localhost:3000/bookmark", bytes.NewBuffer(postBody))
 	if err != nil {
@@ -417,6 +420,7 @@ func testBookmark()(bool) {
 		return false
 	}
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+
 	res, err := client.Do(req)
 	if err != nil {
 		fmt.Printf("Request Error: %s\n", err)
@@ -429,10 +433,10 @@ func testBookmark()(bool) {
 		fmt.Printf("Read Error: %s\n", err)
 	}
 	if !strings.Contains(string(body), "\"bookmarks\":\"\"") {
+		fmt.Printf("string(body): %v\n", string(body))
 		return false
 	}
-
-
+	
 
 
 
@@ -448,6 +452,8 @@ func testBookmark()(bool) {
 		fmt.Printf("Request Error: %s\n", err)
 		return false
 	}
+
+	
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 	res, err = client.Do(req)
 	if err != nil {
@@ -482,11 +488,15 @@ func testBookmark()(bool) {
 	}
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 	res, err = client.Do(req)
+
+	cookie := res.Cookies()
+
 	if err != nil {
 		fmt.Printf("Request Error: %s\n", err)
 		return false
 	}
 
+	fmt.Print(res.Cookies())
 	//checks response
 	body, err = ioutil.ReadAll(res.Body)
 	if err != nil {
@@ -497,13 +507,28 @@ func testBookmark()(bool) {
 	}
 
 
+	postBody4, _ := json.Marshal(map[string]string{
+		"user":     "",
+		"password": "",
+		"bookmarks": "",
+	})
 
 	//fourth message to check all
-	req, err = http.NewRequest(http.MethodPost, "http://localhost:3000/bookmark", bytes.NewBuffer(postBody))
+	req, err = http.NewRequest(http.MethodPost, "http://localhost:3000/bookmark", bytes.NewBuffer(postBody4))
 	if err != nil {
 		fmt.Printf("Request Error: %s\n", err)
 		return false
 	}
+	
+	for _, v := range cookie {
+		if v.Value != "" {
+			req.AddCookie(v)
+		} else {
+			fmt.Println(v.Value)
+		}
+
+	}
+
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 	res, err = client.Do(req)
 	if err != nil {
@@ -632,8 +657,8 @@ func RunUnitTests(dbEmpty bool) {
 
 	var user UserProfile
 	db.First(&user)
-	fmt.Println("Test Username: ", user.User)
-	fmt.Println("Test Password: ", user.Password)
+	//fmt.Println("Test Username: ", user.User)
+	//fmt.Println("Test Password: ", user.Password)
 
 	var results [12]bool
 
