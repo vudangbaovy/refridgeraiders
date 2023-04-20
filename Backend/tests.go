@@ -598,30 +598,12 @@ func testLogout() bool {
 	} else {
 		if strings.Contains(string(body), "test123") {
 			fmt.Println("Successfully logged in")
-			/*
-				// delete the user
-				client := &http.Client{}
-				responseBody = bytes.NewBuffer(postBody)
-				//sends message
-				req, err := http.NewRequest(http.MethodDelete, "http://localhost:3000/user", responseBody)
-				if err != nil {
-					fmt.Printf("Request Error: %s\n", err)
-					return false
-				}
-				req.Header.Set("Content-Type", "application/json; charset=utf-8")
-				_, err = client.Do(req)
-				if err != nil {
-					fmt.Printf("Request Error: %s\n", err)
-					return false
-				}
-			*/
 		} else {
 			fmt.Println("Failed To Login")
 		}
 	}
 
-	result, err1 := http.Get("http://localhost:3000/logout")
-	fmt.Println(result)
+	_, err1 := http.Get("http://localhost:3000/logout")
 	if err1 != nil {
 		fmt.Println("Unable to logout")
 		return false
