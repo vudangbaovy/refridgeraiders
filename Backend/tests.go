@@ -55,7 +55,7 @@ func testDBAdd(db *gorm.DB) bool {
 func testDBSearch(db *gorm.DB) bool {
 	//testing searching users
 
-	fmt.Println("\nTest 1 -------------------------------------")
+	fmt.Println("\nTest 0 -------------------------------------")
 	var insertedUser UserProfile
 	insertedUser.User = "USTest1" //creates userprofiles and adds them to db
 	insertedUser.Password = "password1"
@@ -80,7 +80,7 @@ func testDBSearch(db *gorm.DB) bool {
 
 // test 2 - looks up a pre existing user's allergies
 func testAllergiesPost() bool {
-	fmt.Println("\nTest 2 -------------------------------------")
+	fmt.Println("\nTest 1 -------------------------------------")
 	time.Sleep(100 * time.Millisecond)
 	postBody, _ := json.Marshal(map[string]string{
 		"user":      "Nick",
@@ -110,7 +110,7 @@ func testAllergiesPost() bool {
 
 // test 3 - looks up a pre existing note
 func testNotesPOST() bool {
-	fmt.Println("\nTest 3 -------------------------------------")
+	fmt.Println("\nTest 2 -------------------------------------")
 
 	postBody, _ := json.Marshal(map[string]string{
 		"user":       "Nick",
@@ -140,7 +140,7 @@ func testNotesPOST() bool {
 
 // test 4 - looks up a pre existing user's first and last name
 func testUserPOST() bool {
-	fmt.Println("\nTest 4 -------------------------------------")
+	fmt.Println("\nTest 3 -------------------------------------")
 
 	client := &http.Client{}
 
@@ -400,7 +400,7 @@ func testLogin() bool {
 }
 
 func testBookmark()(bool) {
-	fmt.Println("\nTest 6 -------------------------------------")
+	fmt.Println("\nTest 9 -------------------------------------")
 	client := &http.Client{}
 
 	//first message
@@ -653,7 +653,7 @@ func RunUnitTests(dbEmpty bool) {
 	fmt.Println("Test Username: ", user.User)
 	fmt.Println("Test Password: ", user.Password)
 
-	var results [11]bool
+	var results [12]bool
 
 	fmt.Println("Running hash password tests")
 	results[6] = correctPassTest(&testing.T{})
@@ -676,7 +676,7 @@ func RunUnitTests(dbEmpty bool) {
 	results[8] = TestUserDelete()
 	results[9] = testLogin()
 	fmt.Println("Running logout tests")
-	results[10] = testLogout()
+	results[11] = testLogout()
 	fmt.Println("\nTest Results: ")
 
 	for i, v := range results {
