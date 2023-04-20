@@ -11,7 +11,7 @@ import { User } from './user';
 
 export class DataService {
   private registerUrl = 'http://localhost:3000/user/register'
-  private loginUrl = 'http://localhost:3000/user';
+  private loginUrl = 'http://localhost:3000/login';
   private getUserUrl = 'http://localhost:3000/login';
 
   isLoggedIn: boolean = false;
@@ -64,7 +64,7 @@ export class DataService {
   }
 
   getUser(user: any) {
-    return this.http.post('http://localhost:3000/login', user).pipe(map((response: any) => {
+    return this.http.post('http://localhost:3000/user', user).pipe(map((response: any) => {
       console.log(response);
       return response;
     }));
