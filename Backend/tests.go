@@ -567,7 +567,8 @@ func testBookmark()(bool) {
 	if !strings.Contains(string(body), "KeyLimePie") {
 		return false
 	}
-	
+	return true
+}
 
 func testLogout() bool {
 	// sending it as JSON
