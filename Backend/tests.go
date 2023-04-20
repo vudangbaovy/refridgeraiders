@@ -55,7 +55,7 @@ func testDBAdd(db *gorm.DB) bool {
 func testDBSearch(db *gorm.DB) bool {
 	//testing searching users
 
-	fmt.Println("\nTest 0 -------------------------------------")
+	fmt.Println("\nTest 1 -------------------------------------")
 	var insertedUser UserProfile
 	insertedUser.User = "USTest1" //creates userprofiles and adds them to db
 	insertedUser.Password = "password1"
@@ -80,7 +80,7 @@ func testDBSearch(db *gorm.DB) bool {
 
 // test 2 - looks up a pre existing user's allergies
 func testAllergiesPost() bool {
-	fmt.Println("\nTest 1 -------------------------------------")
+	fmt.Println("\nTest 2 -------------------------------------")
 	time.Sleep(100 * time.Millisecond)
 	postBody, _ := json.Marshal(map[string]string{
 		"user":      "Nick",
@@ -110,7 +110,7 @@ func testAllergiesPost() bool {
 
 // test 3 - looks up a pre existing note
 func testNotesPOST() bool {
-	fmt.Println("\nTest 2 -------------------------------------")
+	fmt.Println("\nTest 3 -------------------------------------")
 
 	postBody, _ := json.Marshal(map[string]string{
 		"user":       "Nick",
@@ -140,7 +140,7 @@ func testNotesPOST() bool {
 
 // test 4 - looks up a pre existing user's first and last name
 func testUserPOST() bool {
-	fmt.Println("\nTest 3 -------------------------------------")
+	fmt.Println("\nTest 4 -------------------------------------")
 
 	client := &http.Client{}
 
@@ -174,7 +174,7 @@ func testUserPOST() bool {
 
 // test 5 - Changes a user's name
 func testUserPUT() bool {
-	fmt.Println("\nTest 4 -------------------------------------")
+	fmt.Println("\nTest 5 -------------------------------------")
 
 	client := &http.Client{}
 
@@ -313,7 +313,7 @@ func incorrectPassTest(t *testing.T) bool {
 }
 
 func TestUserDelete() bool {
-	fmt.Println("\nTest 7 -------------------------------------")
+	fmt.Println("\nTest 10 -------------------------------------")
 
 	client := &http.Client{}
 
@@ -400,7 +400,7 @@ func testLogin() bool {
 }
 
 func testBookmark()(bool) {
-	fmt.Println("\nTest 9 -------------------------------------")
+	fmt.Println("\nTest 11 -------------------------------------")
 	client := &http.Client{}
 
 	//first message
@@ -672,11 +672,11 @@ func RunUnitTests(dbEmpty bool) {
 	results[5] = testUserPOST()
 	results[4] = testUserPUT()
 	fmt.Println("Running login tests")
-	results[10] = testBookmark()
+	results[11] = testBookmark()
 	results[8] = TestUserDelete()
 	results[9] = testLogin()
 	fmt.Println("Running logout tests")
-	results[11] = testLogout()
+	results[10] = testLogout()
 	fmt.Println("\nTest Results: ")
 
 	for i, v := range results {
