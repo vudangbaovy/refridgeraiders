@@ -24,6 +24,7 @@ export class DataService {
     ) { }
 
   registerUser(user: any) {
+    console.log(user)
     return this.http.post<any>(this.registerUrl, user).pipe(map((response: any) => {
       // do whatever with your response
       this.isRegistered = true;
@@ -39,27 +40,33 @@ export class DataService {
   // }
   loginUser(user: any): Observable<any> {
     return this.http.post(this.loginUrl, user).pipe(map((response: any) => {
-      // do whatever with your response
-      if (response.status === 200) {
-        this.isLoggedIn = true;
-        if (this.redirectUrl) {
-          this.router.navigate([this.redirectUrl]);
-          this.redirectUrl = '/';
-        }
+      // if (response.status !== 200) { 
+      //   this.isLoggedIn = false;
+      //   this.faultyLogin = true;
+      //   return;
+      // }
+      this.isLoggedIn = true;
+      if (this.redirectUrl) {
+        this.router.navigate([this.redirectUrl]);
+        this.redirectUrl = '/';
       }
-      else {
-        this.isLoggedIn = false;
-        this.faultyLogin = true;
-      }
+      //console.log(user)
+      return response;
     }));
   }
 
   logout() {
+    this.http.get('http://localhost:3000/logout').subscribe((response: any) => {
+      console.log(response);
+    });
     this.isLoggedIn = false;
     this.router.navigate(['login']);
   }
 
-  getUser() {
-    return this.http.post(this.getUserUrl, {token: localStorage.getItem('token')});
+  getUser(user: any) {
+    return this.http.post('http://localhost:3000/login', user).pipe(map((response: any) => {
+      console.log(response);
+      return response;
+    }));
   }
 }

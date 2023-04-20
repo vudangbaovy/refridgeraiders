@@ -14,7 +14,15 @@ export class LoginComponent implements OnInit {
   invalid = false;
   loginUserData = {
     user: "",
-    password: ""
+    password: "",
+    firstN: "",
+    lastN: ""
+  }
+  user = {
+    user: "",
+    password: "",
+    firstN: "",
+    lastN: ""
   }
   constructor(
     private dataService: DataService,
@@ -47,14 +55,18 @@ export class LoginComponent implements OnInit {
 
   loginUser() {
     this.dataService.loginUser(this.loginUserData)
-      .subscribe(
-        res => console.log(res),
-        err => console.log(err)
-      )
-      if(this.dataService.faultyLogin == true) {
-        this.invalid = true;
+      .subscribe((response: any) => {
+        console.log(response);
+        this.loginUserData = response;
+        this.dataService.isLoggedIn = true;
+        console.log(this.loginUserData);
       }
+      )
+    if(this.dataService.faultyLogin == true) {
+      this.invalid = true;
+    }
   }
+
   redirect() {
     this.router.navigate(['/register']);
   }

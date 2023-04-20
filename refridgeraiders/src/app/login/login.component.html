@@ -9,14 +9,10 @@
             </mat-form-field>
             <mat-form-field>
                 <input [(ngModel)]="loginUserData.password" 
-                name="password" 
+                name="password"
                 matInput type="password" 
                 placeholder="Password"
-                class="form-control"
-                formControlName="password"
-                [ngClass]="{'is-invalid': submitted && f.password.errors}"
-                id="inputPassword4">
-                <div *ngIf="submitted && f.password.errors" class="invalid-feedback"></div>
+                class="form-control">
               </mat-form-field>
               <div *ngIf="invalid" class="invalid-feedback">Invalid username or password</div>
               <button (click)="loginUser()" type="submit">Log In</button>

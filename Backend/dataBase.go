@@ -8,10 +8,10 @@ use command "go run ." to run with main.go
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
-	"log"
-	
+
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -19,13 +19,13 @@ import (
 // user profile definition
 type UserProfile struct {
 	gorm.Model
-	UserNotes []UserNote `gorm:"foreignKey:UserRef"`
+	UserNotes     []UserNote `gorm:"foreignKey:UserRef"`
 	UserBookMarks string
-	User      string
-	FirstN    string
-	LastN     string
-	Password  string
-	Allergies string
+	User          string
+	FirstN        string
+	LastN         string
+	Password      string
+	Allergies     string
 }
 
 // types are seperated into json to send only send specific data
@@ -58,8 +58,8 @@ type UserNote struct {
 }
 
 type BookMarkJson struct {
-	User     string `json:"user"`
-	Password string `json:"password"`
+	User          string `json:"user"`
+	Password      string `json:"password"`
 	UserBookMarks string `json:"bookmarks"`
 }
 
@@ -83,13 +83,13 @@ func UserRegisterPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var newUserJson LoginJson
 	json.NewDecoder(r.Body).Decode(&newUserJson)
-
+	fmt.Println("password: ", newUserJson.Password)
 	// change the password to be hashed
 	hash, err := hashedPass(newUserJson.Password)
 	if err != nil {
 		fmt.Println("password unable to be hashed")
 	}
-
+	fmt.Println("first: ", newUserJson.FirstN, "last: ", newUserJson.LastN)
 	user := UserProfile{User: newUserJson.User, Password: hash,
 		FirstN: newUserJson.FirstN, LastN: newUserJson.LastN, Allergies: "", UserBookMarks: ""}
 	addUser(&user, connectDB("test"))
@@ -101,13 +101,17 @@ func UserPOST(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var LUS LoginJson
 	json.NewDecoder(r.Body).Decode(&LUS)
-
+	fmt.Println("userpost Password: ", LUS.Password)
 	db := connectDB("test")
 	valid, user := ValidateUserSessions(w, r, LUS.User, LUS.Password, db)
 	if valid {
+		fmt.Println("first: ", user.FirstN, "last: ", user.LastN)
 		LUS.FirstN = user.FirstN
 		LUS.LastN = user.LastN
+		fmt.Println("first: ", LUS.FirstN, "last: ", LUS.LastN)
+		fmt.Print("altered Username: ", LUS.User)
 		json.NewEncoder(w).Encode(&LUS)
+		fmt.Printf("w: %v\n", w)
 	} else {
 		w.WriteHeader(201)
 	}
@@ -154,7 +158,7 @@ func AllergiesPut(w http.ResponseWriter, r *http.Request) {
 	valid, user := ValidateUserSessions(w, r, AEJ.User, AEJ.Password, db)
 	if valid {
 		exists, _ := StrHelper(user.Allergies, AEJ.Allergies)
-		if !exists{
+		if !exists {
 			newAllergies := user.Allergies + "," + AEJ.Allergies
 			db.Model(&user).Update("Allergies", newAllergies)
 			json.NewEncoder(w).Encode(&AEJ)
@@ -236,7 +240,7 @@ func ValidateUserSessions(w http.ResponseWriter, r *http.Request, inputUserName 
 	//returns false and empty struct if unsuccessful
 
 	var user UserProfile
-
+	fmt.Println("password: ", inputPassword)
 	session, err := cookieStore().Get(r, "Cookie-Name")
 	if err != nil {
 		log.Fatalln(err)
@@ -249,7 +253,6 @@ func ValidateUserSessions(w http.ResponseWriter, r *http.Request, inputUserName 
 		return true, &user
 	}
 
-	
 	//fmt.Println("User Login  : Username:", inputUserName, " Password:", inputPassword)
 	err2 := db.Where("User = ?", inputUserName).First(&user)
 	if err2.Error != nil || !compareHash(inputPassword, user.Password) {
@@ -263,7 +266,7 @@ func ValidateUserSessions(w http.ResponseWriter, r *http.Request, inputUserName 
 	session.Values["authenticated"] = true
 	session.Values["user"] = user.User
 	session.Save(r, w)
-	
+
 	return true, &user
 }
 
@@ -396,7 +399,7 @@ func BookmarkPut(w http.ResponseWriter, r *http.Request) {
 
 	if valid {
 		exists, _ := StrHelper(user.UserBookMarks, BMJson.UserBookMarks)
-		if ! exists{
+		if !exists {
 			newBookMarks := user.UserBookMarks + "," + BMJson.UserBookMarks
 			db.Model(&user).Update("UserBookMarks", newBookMarks)
 			json.NewEncoder(w).Encode(&BMJson)
@@ -428,15 +431,15 @@ func BookmarkDelete(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func StrHelper (uBM string, jBM string)(bool,int) {
+func StrHelper(uBM string, jBM string) (bool, int) {
 	if !strings.Contains(uBM, jBM) {
 		return false, 0
 	} else {
 		i := strings.Index(uBM, jBM)
 		if uBM[i-1] != ',' || (len(uBM) != i+len(jBM)) && (uBM[i+len(jBM)] != ',') {
 			exists, index := StrHelper(uBM[i+len(jBM):], jBM)
-			return exists, index+i+len(jBM)-1
-	}
+			return exists, index + i + len(jBM) - 1
+		}
 		return true, i
-}
+	}
 }
