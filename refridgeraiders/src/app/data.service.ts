@@ -64,7 +64,7 @@ export class DataService {
   }
 
   getUser(user: any) {
-    return this.http.post('http://localhost:3000/user', user).pipe(map((response: any) => {
+    return this.http.post('http://localhost:3000/login', user).pipe(map((response: any) => {
       console.log(response);
       return response;
     }));

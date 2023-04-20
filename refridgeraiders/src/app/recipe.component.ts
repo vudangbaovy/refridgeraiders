@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ApiService } from './home/api.service';
 import { RecipeService } from './recipe.service';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-recipe',
@@ -12,8 +13,8 @@ export class RecipeComponent implements OnInit{
 
   public selectedRecipeData: any;
   public selectedRecipeIndex: number;
-
-  constructor(private apiService: ApiService, private recipeService: RecipeService) {
+  
+  constructor(private apiService: ApiService, private recipeService: RecipeService, private http: HttpClient) {
      this.selectedRecipeIndex = this.recipeService.selectedRecipeIndex;
    }
 

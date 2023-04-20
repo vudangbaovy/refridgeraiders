@@ -9,22 +9,18 @@ import { LoginComponent } from '../login/login.component';
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent {
-  user = {
-    user: "",
-    password: "",
-    firstN: "",
-    lastN: ""
-  };
+  user: any = {};
   constructor(private dataService: DataService, private login: LoginComponent) { }
   ngOnInit() {
     const getUser = {
-      user: "",
-      password: ""
+      user: "vyvooz",
+      password: "123hello"
     }
     console.log(this.login.loginUserData)
-    this.dataService.getUser(this.login.loginUserData).subscribe((response: any) => {
+    this.dataService.getUser(getUser).subscribe((response: any) => {
         console.log(response);
         this.user = response;
+        console.log(this.user);
       }, (error) => {
         console.error(error);
       });
