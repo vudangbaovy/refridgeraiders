@@ -1,3 +1,15 @@
+<h2>Frontend</h2>
+<h3><p>What's changed:</p></h3>
+<p>1. Allowed displaying of the recipes</p>
+<p>2. Integrated recipe bookmarking</p>
+<p>3. Profile page now displays the current logged in user's name and username</p>
+
+<p>Front-end is currently using POST request to /login for the login function and /user to get user's profile information from the databse.</p>
+
+<h3>Tests</h3>
+<p> 1. Cypress test for functionality of home page and the user registration routing from Home > Log In > "First time at KitchenRescue?" > Register</p>
+<p>2. Cypress test to verify that the POST request to backend database returns the correct username of the current logged in user</p>
+
 <h2>Backend</h2>
 <h3><p>What's changed:</p></h3>
 <p>1. Backend issues with sessions have been fixed</p>
