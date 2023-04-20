@@ -11,3 +11,14 @@
 <h3>Front Page</h3>
 
 ![front page](https://i.imgur.com/sqZf6C6.png)
+
+<h3>How to run KitchenRescue</h3>
+<h4>Front-end</h4>
+<p>Dependencies</p>
+<ul>
+<li>Install Angular CLI </li>
+<li>Install Angular Materials</li>
+<li>Install Angular Flex Layout (https://github.com/angular/flex-layout) </li>
+<li>Install Ng2SearchPipeModule</li>
+</ul>
+<p>To start the front-end, navigate to the refrigeraders/refrideraders folder and run the command <code>ng serve -o</code> from the terminal</p>
